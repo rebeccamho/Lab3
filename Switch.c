@@ -9,7 +9,10 @@
 
 #define PF2             (*((volatile uint32_t *)0x40025010))
 #define PF1             (*((volatile uint32_t *)0x40025008))
-#define PF4   (*((volatile uint32_t *)0x40025040))
+#define PF4   					(*((volatile uint32_t *)0x40025040))
+	
+uint16_t counter4 = 0;
+uint16_t counter5 = 0;
 
 void PortF_Init() {
 	SYSCTL_RCGCGPIO_R |= 0x20;            // activate port F clock
@@ -25,10 +28,13 @@ void PortF_Init() {
 	GPIO_PORTF_PUR_R |= 0x10;         // 5) pullup for PF4
 
   PF2 = 0;                  				    // turn off LED
+	PF1 = 0;
 }
+
 
 void PortE_Init() { // switches are connected to PortE
 	SYSCTL_RCGCGPIO_R |= 0x10;		// activate clock for Port E
+	while((SYSCTL_PRGPIO_R&0x10)==0){}; 	// allow time for clock to start
 	GPIO_PORTE_DIR_R &= ~0x30;		// make PE5-4 in
 	GPIO_PORTE_DEN_R |= 0x30; 		// enable digital I/O on PE5-4
 	GPIO_PORTE_IS_R &= ~0x30;			// PE5-4 is edge-sensitive
@@ -38,4 +44,27 @@ void PortE_Init() { // switches are connected to PortE
 	GPIO_PORTE_IM_R |= 0x30;			// arm interrupts on PE5-4
 	NVIC_PRI1_R = (NVIC_PRI1_R&0xFFFFFF00)|0x00000040;	// PortE=priority 2
 	NVIC_EN0_R = 1<<4; 	// enable interrupt 4 in NVIC
+}
+
+void GPIOPortE_Handler(void) {
+	if(GPIO_PORTE_RIS_R&0x10) {		// poll PE4
+		GPIO_PORTE_ICR_R = 0x10;		// acknowledge flag4
+		PF1 ^= 0x02;
+		/*
+		if(counter4 == 15) {	// debounce
+			PF1 ^= 0x02;	// test
+		} else {
+			counter4++;
+		}
+	} else { counter4 = 0; }
+		*/
+	}
+	if(GPIO_PORTE_RIS_R&0x20) {		// poll PE5
+		GPIO_PORTE_ICR_R = 0x20;		// acknowledge flag5
+		if(counter5 == 15) {
+			PF1 ^= 0x02;
+		} else {
+			counter5++; 
+		}
+	} else { counter5 = 0; }
 }

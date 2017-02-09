@@ -13,6 +13,7 @@
 #include "Timer.h"
 #include "Switch.h"
 #include "LCD.h"
+#include "Speaker.h"
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -24,8 +25,10 @@ int main(void){
 	PLL_Init(Bus80MHz);                   // 80 MHz
 	Output_Init();
 	Timer0A_Init1HzInt();
+	Timer1A_Init100HzInt();
 	PortF_Init();
 	ST7735_InitR(INITR_REDTAB);
+	PortE_Init();
 	EnableInterrupts();
 //	int16_t yellow = ST7735_Color565(0xf4, 0xff, 0x87);
 //	int16_t salmon = ST7735_Color565(0xFF, 0x87, 0x8F);

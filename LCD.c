@@ -29,3 +29,4 @@ void initDigitalTimerDisplay(void){
 	ST7735_DrawChar(53, 0, '0', yellow, 0, 5);
 	ST7735_DrawChar(81, 0, '0', yellow, 0, 5);
 }
+

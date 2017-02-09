@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include "LCD.h"
 
+#define PF1             (*((volatile uint32_t *)0x40025008))
 #define PF2             (*((volatile uint32_t *)0x40025010))
 
 void DisableInterrupts(void); // Disable interrupts
@@ -17,9 +18,19 @@ long StartCritical (void);    // previous I bit, disable interrupts
 void EndCritical(long sr);    // restore I bit to previous value
 void WaitForInterrupt(void);  // low power mode
 
+struct Alarm {
+	uint16_t hour;
+	uint16_t minute;
+};
+typedef struct Alarm Alarm;
+
+static const uint32_t size = 100;
+
 uint16_t second = 0;
 uint16_t minute = 0;
 uint16_t hour = 0;
+Alarm alarmList[size];
+uint32_t alarmEntries = 0;
 
 // This debug function initializes Timer0A to request interrupts
 // at a 100 Hz frequency.  It is similar to FreqMeasure.c.
@@ -49,7 +60,7 @@ bool newHour = false;
 void Timer0A_Handler(void){
   TIMER0_ICR_R = TIMER_ICR_TATOCINT;    // acknowledge timer0A timeout
 	long sr = StartCritical();
-  PF2 ^= 0x04;                   // heartbeat
+  //PF2 ^= 0x04;                   // heartbeat
 	second++;
 	newMinute = false;
 	newHour = false;
@@ -80,3 +91,13 @@ uint32_t GetHour(){
 uint32_t GetMinute(){
 	return minute;
 }
+
+
+/* alarm search, put this somewhere else
+	for(int i = 0; i < alarmEntries; i++) { // see if an alarm is set for this time
+		if(hour == alarmList[i].hour && minute == alarmList[i].minute) {
+			// alarm needs to go off
+			break;
+		}
+	}
+*/
