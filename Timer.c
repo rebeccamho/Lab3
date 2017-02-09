@@ -64,11 +64,11 @@ void Timer0A_Handler(void){
 	second++;
 	newMinute = false;
 	newHour = false;
-	if(second == 1) { // reached end of minute
+	if(second == 60) { // reached end of minute
 		minute++;
 		newMinute = true;
 		second = 0;
-		if(minute == 11) { // reached end of hour
+		if(minute == 60) { // reached end of hour
 			minute = 0;
 			hour++;
 			newHour = true;

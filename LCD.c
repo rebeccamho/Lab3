@@ -9,44 +9,58 @@
 #include "../ValvanoWareTM4C123/ValvanoWareTM4C123/ST7735_4C123/ST7735.h"
 
 int16_t yellow;
-uint32_t tensPlace;
+uint32_t tensPlaceM;
+uint32_t tensPlaceH;
 
 void DisplayHour(){
 	//display hour on lcd
-	char h = (char)GetHour() + '0';
-	ST7735_DrawChar(18, 0, h, yellow, 0, 5);
+	char h = (char)GetHour();
+	if(h == 10){
+		tensPlaceH = 1;
+		ST7735_DrawChar(5, 0, '1', yellow, 0, 5);
+	}
+	else if(h == 1){
+		tensPlaceH = 0;
+		ST7735_DrawChar(5, 0, '0', yellow, 0, 5);
+	}
+	h = h%10;
+	ST7735_DrawChar(33, 0, h + '0', yellow, 0, 5);
 }
 
 void DisplayMinute(){
 	//display minute on lcd
 	char m = (char)GetMinute();
+	
 	if(m % 10 == 0){
-		tensPlace++;
-		if(m == 60){
-			tensPlace = 0;
-			ST7735_DrawChar(53, 0, '0', yellow, 0, 5);
-			ST7735_DrawChar(81, 0, '0', yellow, 0, 5);
+		tensPlaceM++;
+		if(m == 0){
+			tensPlaceM = 0;
+			ST7735_DrawChar(69, 0, '0', yellow, 0, 5);
+			ST7735_DrawChar(97, 0, '0', yellow, 0, 5);
 		}
 		else{
-			ST7735_DrawChar(53, 0, tensPlace + '0', yellow, 0, 5);
-			ST7735_DrawChar(81, 0, '0', yellow, 0, 5);
+			ST7735_DrawChar(69, 0, tensPlaceM + '0', yellow, 0, 5);
+			ST7735_DrawChar(97, 0, '0', yellow, 0, 5);
 		}
 	}
 	else{
-		ST7735_DrawChar(81, 0, m + 48, yellow, 0, 5);
+		m = m%10;
+		ST7735_DrawChar(97, 0, m + '0', yellow, 0, 5);
 	}
 	
 }
 
 void initDigitalTimerDisplay(void){
 	yellow = ST7735_Color565(0xf4, 0xff, 0x87);
-	tensPlace = 0;
+	tensPlaceM = 0;
+	tensPlaceH = 0;
 	ST7735_FillScreen(ST7735_BLACK); 
   ST7735_SetCursor(0,0);
 	//ST7735_OutString("hi");
-	ST7735_DrawChar(38, 0, ':', yellow, ST7735_BLACK, 5);
-	ST7735_DrawChar(18, 0, '0', yellow, ST7735_BLACK, 5);
-	ST7735_DrawChar(53, 0, '0', yellow, ST7735_BLACK, 5);
-	ST7735_DrawChar(81, 0, '0', yellow, ST7735_BLACK, 5);
+	ST7735_DrawChar(53, 0, ':', yellow, ST7735_BLACK, 5);
+	ST7735_DrawChar(5, 0, '0', yellow, ST7735_BLACK, 5);
+	ST7735_DrawChar(33, 0, '0', yellow, ST7735_BLACK, 5);
+	ST7735_DrawChar(69, 0, '0', yellow, ST7735_BLACK, 5);
+	ST7735_DrawChar(97, 0, '0', yellow, ST7735_BLACK, 5);
 }
 
