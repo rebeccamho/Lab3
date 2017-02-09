@@ -6,6 +6,8 @@
 #include "Timer.h"
 #include "../ValvanoWareTM4C123/ValvanoWareTM4C123/inc/tm4c123gh6pm.h"
 #include <stdint.h>
+#include <stdbool.h>
+#include "LCD.h"
 
 #define PF2             (*((volatile uint32_t *)0x40025010))
 
@@ -42,20 +44,39 @@ void Timer0A_Init1HzInt(void){
   NVIC_EN0_R = 1<<19;              // enable interrupt 19 in NVIC
 }
 
+bool newMinute = false;
+bool newHour = false;
 void Timer0A_Handler(void){
   TIMER0_ICR_R = TIMER_ICR_TATOCINT;    // acknowledge timer0A timeout
 	long sr = StartCritical();
   PF2 ^= 0x04;                   // heartbeat
 	second++;
-	if(second == 60) { // reached end of minute
+	newMinute = false;
+	newHour = false;
+	if(second == 5) { // reached end of minute
 		minute++;
-		if(minute == 60) { // reached end of hour
+		newMinute = true;
+		second = 0;
+		if(minute == 5) { // reached end of hour
 			minute = 0;
 			hour++;
+			newHour = true;
 			if(hour == 13) { // reached end of 12-hr interval
 				hour = 1;
 			}
 		}
 	}
 	EndCritical(sr);
+	if(newMinute)
+		DisplayMinute();
+	if(newHour)
+		DisplayHour();
+}
+
+uint32_t GetHour(){
+	return hour;
+}
+
+uint32_t GetMinute(){
+	return minute;
 }

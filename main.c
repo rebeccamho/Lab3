@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include "Timer.h"
 #include "Switch.h"
+#include "LCD.h"
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -24,6 +25,18 @@ int main(void){
 	Output_Init();
 	Timer0A_Init1HzInt();
 	PortF_Init();
+	ST7735_InitR(INITR_REDTAB);
 	EnableInterrupts();
+//	int16_t yellow = ST7735_Color565(0xf4, 0xff, 0x87);
+//	int16_t salmon = ST7735_Color565(0xFF, 0x87, 0x8F);
+//	int16_t pink = ST7735_Color565(0xFF, 0x87, 0xDC);
+//	int16_t purpleBlue = ST7735_Color565(0x87, 0x87, 0xFF);
+//	int16_t cyan = ST7735_Color565(0x87, 0xFF, 0xFF);
+//	ST7735_DrawChar(38, 0, ':', yellow, 0, 5);
+//	ST7735_DrawChar(18, 0, '1', yellow, 0, 5);
+//	ST7735_DrawChar(53, 0, '1', yellow, 0, 5);
+//	ST7735_DrawChar(81, 0, '1', yellow, 0, 5);
+	initDigitalTimerDisplay();
+	//ST7735_FillRect(27, 0, 93, 5, yellow);
 	while(1){}
 }
