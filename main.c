@@ -15,20 +15,29 @@
 #include "LCD.h"
 #include "Speaker.h"
 
+#define PF1             (*((volatile uint32_t *)0x40025008))
+
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
 long StartCritical (void);    // previous I bit, disable interrupts
 void EndCritical(long sr);    // restore I bit to previous value
 void WaitForInterrupt(void);  // low power mode
 
+void DelayWait10ms(uint32_t);
+
 int main(void){
 	PLL_Init(Bus80MHz);                   // 80 MHz
 	Output_Init();
 	Timer0A_Init1HzInt();
-	Timer1A_Init100HzInt();
+	//Timer1A_Init100HzInt();
 	PortF_Init();
 	PortE_Init();
+	PortD_Init();
 	initDigitalTimerDisplay();
 	EnableInterrupts();
-	while(1){}
+	while(1){
+		PF1 ^= 0x02;
+		DelayWait10ms(1);
+	}
 }
+
