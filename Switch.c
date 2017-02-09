@@ -7,10 +7,12 @@
 #include "../ValvanoWareTM4C123/ValvanoWareTM4C123/inc/tm4c123gh6pm.h"
 #include <stdint.h>
 
-#define PF2             (*((volatile uint32_t *)0x40025010))
 #define PF1             (*((volatile uint32_t *)0x40025008))
+#define PF2             (*((volatile uint32_t *)0x40025010))
 #define PF4   					(*((volatile uint32_t *)0x40025040))
 	
+void DelayWait10ms(uint32_t);
+
 uint16_t counter4 = 0;
 uint16_t counter5 = 0;
 
@@ -30,7 +32,29 @@ void PortF_Init() {
   PF2 = 0;                  				    // turn off LED
 	PF1 = 0;
 }
+//pf4 for speaker, switches on pf0-3
 
+//------------Switch_Init------------
+// Initialize GPIO Port A bit 5 for input
+// Input: none
+// Output: none
+void Switch1_Init(void){ 
+  SYSCTL_RCGCGPIO_R |= 0x00000001;     // 1) activate clock for Port A
+  while((SYSCTL_PRGPIO_R&0x01) == 0){};// ready?
+  GPIO_PORTA_DIR_R &= ~0x20;        // 5) direction PA5 input
+	GPIO_PORTA_DEN_R |= 0x20;         // 7) enable PA5 digital port
+	
+	GPIO_PORTA_IS_R &= ~0x30;			// PE5-4 is edge-sensitive
+	GPIO_PORTA_IBE_R &= ~0x30;		// PE5-4 is not both edges
+	GPIO_PORTA_IEV_R |= 0x30;			// PE5-4 rising edge event
+	GPIO_PORTA_ICR_R = 0x30;			// clear flag5-4
+	GPIO_PORTA_IM_R |= 0x30;			// arm interrupts on PE5-4
+
+	// LOOK IN BOOK
+	NVIC_PRI1_R = (NVIC_PRI1_R&0xFFFFFF00)|0x00000040;	// PortE=priority 2
+	NVIC_EN0_R = 1<<4; 	// enable interrupt 4 in NVIC
+	
+}
 
 void PortE_Init() { // switches are connected to PortE
 	SYSCTL_RCGCGPIO_R |= 0x10;		// activate clock for Port E
@@ -49,22 +73,31 @@ void PortE_Init() { // switches are connected to PortE
 void GPIOPortE_Handler(void) {
 	if(GPIO_PORTE_RIS_R&0x10) {		// poll PE4
 		GPIO_PORTE_ICR_R = 0x10;		// acknowledge flag4
-		//PF1 ^= 0x02;
-		/*
-		if(counter4 == 15) {	// debounce
-			PF1 ^= 0x02;	// test
-		} else {
-			counter4++;
+		DelayWait10ms(10);
+		if(GPIO_PORTE_DATA_R&0x10) {
+			//PF2 ^= 0x04;
 		}
-	} else { counter4 = 0; }
-		*/
+
 	}
 	if(GPIO_PORTE_RIS_R&0x20) {		// poll PE5
 		GPIO_PORTE_ICR_R = 0x20;		// acknowledge flag5
-		if(counter5 == 15) {
+		DelayWait10ms(10);
+		if(GPIO_PORTE_DATA_R&0x20) {
 			//PF1 ^= 0x02;
-		} else {
-			counter5++; 
 		}
-	} else { counter5 = 0; }
+	}
+}
+
+// Subroutine to wait 10 msec
+// Inputs: None
+// Outputs: None
+// Notes: ...
+void DelayWait10ms(uint32_t n){uint32_t volatile time;
+	while(n){
+    time = 727240*2/91;  // 10msec
+    while(time){
+	  	time--;
+    }
+    n--;
+  }
 }

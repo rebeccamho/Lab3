@@ -58,9 +58,9 @@ void initDigitalTimerDisplay(void){
   ST7735_SetCursor(0,0);
 	//ST7735_OutString("hi");
 	ST7735_DrawChar(53, 0, ':', yellow, ST7735_BLACK, 5);
-	ST7735_DrawChar(5, 0, '0', yellow, ST7735_BLACK, 5);
-	ST7735_DrawChar(33, 0, '0', yellow, ST7735_BLACK, 5);
-	ST7735_DrawChar(69, 0, '0', yellow, ST7735_BLACK, 5);
-	ST7735_DrawChar(97, 0, '0', yellow, ST7735_BLACK, 5);
+	ST7735_DrawChar(5, 0, '0', yellow, ST7735_BLACK, 5);//tens place hour
+	ST7735_DrawChar(33, 0, '1', yellow, ST7735_BLACK, 5);//ones place hour
+	ST7735_DrawChar(69, 0, '0', yellow, ST7735_BLACK, 5);//tens place minute
+	ST7735_DrawChar(97, 0, '0', yellow, ST7735_BLACK, 5);//ones place minute
 }
 

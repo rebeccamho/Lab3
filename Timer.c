@@ -28,7 +28,7 @@ static const uint32_t size = 100;
 
 uint16_t second = 0;
 uint16_t minute = 0;
-uint16_t hour = 0;
+uint16_t hour = 1;
 Alarm alarmList[size];
 uint32_t alarmEntries = 0;
 
@@ -45,7 +45,7 @@ void Timer0A_Init1HzInt(void){
   // **** timer0A initialization ****
                                    // configure for periodic mode
   TIMER0_TAMR_R = TIMER_TAMR_TAMR_PERIOD;
-  TIMER0_TAILR_R = 79999999;         // start value for 1 Hz interrupts
+  TIMER0_TAILR_R = 79999999;         // start value for 1 Hz interrupts 79999999
   TIMER0_IMR_R |= TIMER_IMR_TATOIM;// enable timeout (rollover) interrupt
   TIMER0_ICR_R = TIMER_ICR_TATOCINT;// clear timer0A timeout flag
   TIMER0_CTL_R |= TIMER_CTL_TAEN;  // enable timer0A 32-b, periodic, interrupts
@@ -64,7 +64,8 @@ void Timer0A_Handler(void){
 	second++;
 	newMinute = false;
 	newHour = false;
-	if(second == 60) { // reached end of minute
+	//if(second == 60) { // reached end of minute
+	if(second == 1) { // reached end of minute
 		minute++;
 		newMinute = true;
 		second = 0;
