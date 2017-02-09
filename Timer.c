@@ -57,6 +57,5 @@ void Timer0A_Handler(void){
 			}
 		}
 	}
-  //PF2 ^= 0x04;                   // heartbeat
 	EndCritical(sr);
 }
