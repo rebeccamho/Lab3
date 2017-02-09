@@ -26,3 +26,16 @@ void PortF_Init() {
 
   PF2 = 0;                  				    // turn off LED
 }
+
+void PortE_Init() { // switches are connected to PortE
+	SYSCTL_RCGCGPIO_R |= 0x10;		// activate clock for Port E
+	GPIO_PORTE_DIR_R &= ~0x30;		// make PE5-4 in
+	GPIO_PORTE_DEN_R |= 0x30; 		// enable digital I/O on PE5-4
+	GPIO_PORTE_IS_R &= ~0x30;			// PE5-4 is edge-sensitive
+	GPIO_PORTE_IBE_R &= ~0x30;		// PE5-4 is not both edges
+	GPIO_PORTE_IEV_R |= 0x30;			// PE5-4 rising edge event
+	GPIO_PORTE_ICR_R = 0x30;			// clear flag5-4
+	GPIO_PORTE_IM_R |= 0x30;			// arm interrupts on PE5-4
+	NVIC_PRI1_R = (NVIC_PRI1_R&0xFFFFFF00)|0x00000040;	// PortE=priority 2
+	NVIC_EN0_R = 1<<4; 	// enable interrupt 4 in NVIC
+}
