@@ -7,15 +7,21 @@
 #include "../ValvanoWareTM4C123/ValvanoWareTM4C123/inc/tm4c123gh6pm.h"
 #include <stdint.h>
 
+#define PF2             (*((volatile uint32_t *)0x40025010))
+
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
 long StartCritical (void);    // previous I bit, disable interrupts
 void EndCritical(long sr);    // restore I bit to previous value
 void WaitForInterrupt(void);  // low power mode
 
+uint16_t second = 0;
+uint16_t minute = 0;
+uint16_t hour = 0;
+
 // This debug function initializes Timer0A to request interrupts
 // at a 100 Hz frequency.  It is similar to FreqMeasure.c.
-void Timer0A_Init100HzInt(void){
+void Timer0A_Init1HzInt(void){
   volatile uint32_t delay;
   DisableInterrupts();
   // **** general initialization ****
@@ -26,7 +32,7 @@ void Timer0A_Init100HzInt(void){
   // **** timer0A initialization ****
                                    // configure for periodic mode
   TIMER0_TAMR_R = TIMER_TAMR_TAMR_PERIOD;
-  TIMER0_TAILR_R = 799999;         // start value for 100 Hz interrupts
+  TIMER0_TAILR_R = 79999999;         // start value for 1 Hz interrupts
   TIMER0_IMR_R |= TIMER_IMR_TATOIM;// enable timeout (rollover) interrupt
   TIMER0_ICR_R = TIMER_ICR_TATOCINT;// clear timer0A timeout flag
   TIMER0_CTL_R |= TIMER_CTL_TAEN;  // enable timer0A 32-b, periodic, interrupts
@@ -38,13 +44,19 @@ void Timer0A_Init100HzInt(void){
 
 void Timer0A_Handler(void){
   TIMER0_ICR_R = TIMER_ICR_TATOCINT;    // acknowledge timer0A timeout
-  //PF2 ^= 0x04;                   // profile
-  //PF2 ^= 0x04;                   // profile
-	/*if(bufIndex < size) {
-		TimeBuf[bufIndex] = TIMER1_TAR_R;		// add current time to time dump
-		ADCBuf[bufIndex] = ADCvalue;		// add current ADC value to ADC dump
-		bufIndex++;
+	long sr = StartCritical();
+  PF2 ^= 0x04;                   // heartbeat
+	second++;
+	if(second == 60) { // reached end of minute
+		minute++;
+		if(minute == 60) { // reached end of hour
+			minute = 0;
+			hour++;
+			if(hour == 13) { // reached end of 12-hr interval
+				hour = 1;
+			}
+		}
 	}
-	*/
-  //PF2 ^= 0x04;                   // profile
+  //PF2 ^= 0x04;                   // heartbeat
+	EndCritical(sr);
 }

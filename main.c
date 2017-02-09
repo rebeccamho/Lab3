@@ -10,7 +10,20 @@
 #include "PLL.h"
 #include <stdbool.h>
 #include <stdint.h>
+#include "Timer.h"
+#include "Switch.h"
+
+void DisableInterrupts(void); // Disable interrupts
+void EnableInterrupts(void);  // Enable interrupts
+long StartCritical (void);    // previous I bit, disable interrupts
+void EndCritical(long sr);    // restore I bit to previous value
+void WaitForInterrupt(void);  // low power mode
 
 int main(void){
-
+	PLL_Init(Bus80MHz);                   // 80 MHz
+	Output_Init();
+	Timer0A_Init1HzInt();
+	PortF_Init();
+	EnableInterrupts();
+	while(1){}
 }
