@@ -60,15 +60,15 @@ bool newHour = false;
 void Timer0A_Handler(void){
   TIMER0_ICR_R = TIMER_ICR_TATOCINT;    // acknowledge timer0A timeout
 	long sr = StartCritical();
-  //PF2 ^= 0x04;                   // heartbeat
+  PF2 ^= 0x04;                   // heartbeat
 	second++;
 	newMinute = false;
 	newHour = false;
-	if(second == 5) { // reached end of minute
+	if(second == 1) { // reached end of minute
 		minute++;
 		newMinute = true;
 		second = 0;
-		if(minute == 5) { // reached end of hour
+		if(minute == 11) { // reached end of hour
 			minute = 0;
 			hour++;
 			newHour = true;

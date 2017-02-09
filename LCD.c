@@ -24,9 +24,12 @@ void DisplayMinute(){
 
 void initDigitalTimerDisplay(void){
 	yellow = ST7735_Color565(0xf4, 0xff, 0x87);
-	ST7735_DrawChar(38, 0, ':', yellow, 0, 5);
-	ST7735_DrawChar(18, 0, '0', yellow, 0, 5);
-	ST7735_DrawChar(53, 0, '0', yellow, 0, 5);
-	ST7735_DrawChar(81, 0, '0', yellow, 0, 5);
+	ST7735_FillScreen(ST7735_BLACK); 
+  ST7735_SetCursor(0,0);
+	//ST7735_OutString("hi");
+	ST7735_DrawChar(38, 0, ':', yellow, ST7735_BLACK, 5);
+	ST7735_DrawChar(18, 0, '0', yellow, ST7735_BLACK, 5);
+	ST7735_DrawChar(53, 0, '0', yellow, ST7735_BLACK, 5);
+	ST7735_DrawChar(81, 0, '0', yellow, ST7735_BLACK, 5);
 }
 

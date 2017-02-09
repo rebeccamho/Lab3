@@ -36,7 +36,7 @@ void Timer1A_Init100HzInt(void) {
 
 void Timer1A_Handler(void) {
 	long sr = StartCritical();
-	//PF1 ^= 0x02;
+	PF1 ^= 0x02;
 	EndCritical(sr);
 
 }
