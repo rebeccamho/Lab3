@@ -49,12 +49,16 @@ void PortE_Init() { // switches are connected to PortE
 void GPIOPortE_Handler(void) {
 	if(GPIO_PORTE_RIS_R&0x10) {		// poll PE4
 		GPIO_PORTE_ICR_R = 0x10;		// acknowledge flag4
+		PF1 ^= 0x02;
+		/*
 		if(counter4 == 15) {	// debounce
 			PF1 ^= 0x02;	// test
 		} else {
 			counter4++;
 		}
 	} else { counter4 = 0; }
+		*/
+	}
 	if(GPIO_PORTE_RIS_R&0x20) {		// poll PE5
 		GPIO_PORTE_ICR_R = 0x20;		// acknowledge flag5
 		if(counter5 == 15) {
@@ -64,4 +68,3 @@ void GPIOPortE_Handler(void) {
 		}
 	} else { counter5 = 0; }
 }
-

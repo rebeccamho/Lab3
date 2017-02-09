@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include "Timer.h"
 #include "Switch.h"
+#include "Speaker.h"
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -23,6 +24,7 @@ int main(void){
 	PLL_Init(Bus80MHz);                   // 80 MHz
 	Output_Init();
 	Timer0A_Init1HzInt();
+	Timer1A_Init100HzInt();
 	PortF_Init();
 	PortE_Init();
 	EnableInterrupts();
