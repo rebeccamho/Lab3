@@ -24,6 +24,7 @@ int main(void){
 	Output_Init();
 	Timer0A_Init1HzInt();
 	PortF_Init();
+	PortE_Init();
 	EnableInterrupts();
 	while(1){}
 }
