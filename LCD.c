@@ -9,6 +9,7 @@
 #include "../ValvanoWareTM4C123/ValvanoWareTM4C123/ST7735_4C123/ST7735.h"
 
 int16_t yellow;
+uint32_t tensPlace;
 
 void DisplayHour(){
 	//display hour on lcd
@@ -18,12 +19,28 @@ void DisplayHour(){
 
 void DisplayMinute(){
 	//display minute on lcd
-	char m = (char)GetMinute() + 48;
-	ST7735_DrawChar(81, 0, m, yellow, 0, 5);
+	char m = (char)GetMinute();
+	if(m % 10 == 0){
+		tensPlace++;
+		if(m == 60){
+			tensPlace = 0;
+			ST7735_DrawChar(53, 0, '0', yellow, 0, 5);
+			ST7735_DrawChar(81, 0, '0', yellow, 0, 5);
+		}
+		else{
+			ST7735_DrawChar(53, 0, tensPlace + '0', yellow, 0, 5);
+			ST7735_DrawChar(81, 0, '0', yellow, 0, 5);
+		}
+	}
+	else{
+		ST7735_DrawChar(81, 0, m + 48, yellow, 0, 5);
+	}
+	
 }
 
 void initDigitalTimerDisplay(void){
 	yellow = ST7735_Color565(0xf4, 0xff, 0x87);
+	tensPlace = 0;
 	ST7735_FillScreen(ST7735_BLACK); 
   ST7735_SetCursor(0,0);
 	//ST7735_OutString("hi");
