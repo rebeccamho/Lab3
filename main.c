@@ -14,6 +14,7 @@
 #include "Switch.h"
 #include "LCD.h"
 #include "Speaker.h"
+#include "DigitalDisplay.h"
 
 #define PF1             (*((volatile uint32_t *)0x40025008))
 
@@ -33,7 +34,9 @@ int main(void){
 	PortF_Init();
 	PortE_Init();
 	//InitDigitalTimerDisplay();
-	DisplayMainMenu(0);
+	//DisplayMainMenu(0);
+	DigitalDisplayInit();
+	DigitalTimerDisplay();
 	EnableInterrupts();
 	while(1){
 		OutputSound(1); // toggles PF1 every 1 ms

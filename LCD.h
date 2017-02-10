@@ -5,6 +5,10 @@
 
 #include <stdint.h>
 
+typedef enum  { Select,
+								Up,
+								Down,
+								None} SwitchStates;	
 
 //----------DisplayHour-------------
 //Displays digital hour of day. Used whenever switching to digital clock display,
@@ -19,12 +23,6 @@ void DisplayHour(void);
 //Input: none
 //Output: Display minute of the hour in digital timer
 void DisplayMinute(void);
-
-//----------InitDigitalTimerDisplay-----------
-//Initializes screen for digital timer. Time starts at 1:00
-//Input: none
-//Output: none
-void InitDigitalTimerDisplay(void);
 
 //----------DisplayMainMenu-----------
 //Displays main menu with clock setting options

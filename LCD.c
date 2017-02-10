@@ -20,69 +20,16 @@ typedef enum  { MainMenu,
 								Digital,
 								Analog,
 								SetTime,
-								SetAlarm } LCDstate;
+								SetAlarm} LCDstate;							
 
-int16_t yellow;
-uint32_t tensPlaceM;
-uint32_t tensPlaceH;
 LCDstate currentState;
 bool up = false;	// up switch state
 bool down = false;	// down switch state
 bool select = false;	// select switch state
+								
 MenuOptions mainMenuState[4] = {{"Analog Clock",ST7735_YELLOW,2},{"Digital Clock",ST7735_RED,3},
 		{"Set Time",ST7735_RED,4},{"Set Alarm",ST7735_RED,5}};
 uint16_t currentMenuIndex = 0; // which index in array main menu is highlighting
-
-void DisplayHour(){
-	//display hour on lcd
-	char h = (char)GetHour();
-	if(h == 10){
-		tensPlaceH = 1;
-		ST7735_DrawChar(5, 0, '1', yellow, 0, 5);
-	}
-	else if(h == 1){
-		tensPlaceH = 0;
-		ST7735_DrawChar(5, 0, '0', yellow, 0, 5);
-	}
-	h = h%10;
-	ST7735_DrawChar(33, 0, h + '0', yellow, 0, 5);
-}
-
-void DisplayMinute(){
-	//display minute on lcd
-	char m = (char)GetMinute();
-	
-	if(m % 10 == 0){
-		tensPlaceM++;
-		if(m == 0){
-			tensPlaceM = 0;
-			ST7735_DrawChar(69, 0, '0', yellow, 0, 5);
-			ST7735_DrawChar(97, 0, '0', yellow, 0, 5);
-		}
-		else{
-			ST7735_DrawChar(69, 0, tensPlaceM + '0', yellow, 0, 5);
-			ST7735_DrawChar(97, 0, '0', yellow, 0, 5);
-		}
-	}
-	else{
-		m = m%10;
-		ST7735_DrawChar(97, 0, m + '0', yellow, 0, 5);
-	}
-	
-}
-
-void InitDigitalTimerDisplay(void){
-	yellow = ST7735_Color565(0xf4, 0xff, 0x87);
-	tensPlaceM = 0;
-	tensPlaceH = 0;
-	ST7735_FillScreen(ST7735_BLACK); 
-  ST7735_SetCursor(0,0);
-	ST7735_DrawChar(53, 0, ':', yellow, ST7735_BLACK, 5);
-	ST7735_DrawChar(5, 0, '0', yellow, ST7735_BLACK, 5);//tens place hour
-	ST7735_DrawChar(33, 0, '1', yellow, ST7735_BLACK, 5);//ones place hour
-	ST7735_DrawChar(69, 0, '0', yellow, ST7735_BLACK, 5);//tens place minute
-	ST7735_DrawChar(97, 0, '0', yellow, ST7735_BLACK, 5);//ones place minute
-}
 
 void DisplayMainMenu(int16_t n) {
 	currentState = MainMenu;
@@ -99,6 +46,21 @@ void DisplayMainMenu(int16_t n) {
 		MenuOptions current = mainMenuState[i];
 		ST7735_DrawString(1, current.y, current.msg, current.color);
 	}	
+}
+
+void DisplaySetTime(SwitchStates state) {
+	switch(state) {
+		case None:
+			//InitDigitalTimerDisplay();
+			break;
+		case Select:
+			break;
+		case Up:
+			break;
+		case Down:
+			break;
+	}
+
 }
 
 void CheckSwitches() {
@@ -118,6 +80,16 @@ void CheckSwitches() {
 void SelectFunction() {
 	switch(currentState) {
 		case MainMenu:
+			switch(currentMenuIndex) {
+				case 0:		// analog clock
+					break;
+				case 1:		// digital clock
+					break;
+				case 2:		// set time
+					break;
+				case 3:		// set alarm
+					break;
+			}
 			break;
 		case Digital:
 			break;
