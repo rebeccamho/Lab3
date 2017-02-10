@@ -3,6 +3,10 @@
 // Matt Owens & Rebecca Ho
 // 2/8/17
 
+// TODO: DecreaseCurrent, AM/PM functionality, testing, going from main to this screen, going from this screen to main,
+// making sure set time can be displayed and also *UNINTERRUPTED* -- create bool for settime so display hour and minute 
+// not called in this case
+
 #include "LCD.h"
 #include "Timer.h"
 #include "DigitalDisplay.h"
@@ -18,11 +22,11 @@ struct TimeSet {
 };
 typedef struct TimeSet TimeSet;
 
-typedef enum  { tensH,
-								onesH,
-								tensM,
-								onesM,
-								AMPM} SetState;		
+typedef enum  { tensH = 0,
+								onesH = 1,
+								tensM = 2,
+								onesM = 3,
+								AMPM = 4} SetState;		
 
 TimeSet timeSetting[4] = {{5,1,'0',ST7735_WHITE,ST7735_BLACK,5},{33,1,'1',ST7735_WHITE,ST7735_BLACK,5},
 		{69,1,'0',ST7735_WHITE,ST7735_BLACK,5},{97,1,'0',ST7735_WHITE,ST7735_BLACK,5}};
@@ -32,6 +36,8 @@ TimeSet tensPlaceM;
 TimeSet onesPlaceM;
 TimeSet tensPlaceH;
 TimeSet onesPlaceH;
+		
+SetState currentlySetting = tensH;
 
 void DigitalDisplayInit() {
 	tensPlaceH = timeSetting[0];
@@ -52,6 +58,7 @@ void DigitalTimerDisplay(SwitchStates state){
 			}
 			break;
 		case Select:
+			UpdateSet();
 			break;
 		case Up:
 			break;
@@ -101,6 +108,51 @@ void DisplayMinute(){
 		DrawOnesPlaceM();
 	}
 	
+}
+
+void UpdateSet() {
+	timeSetting[currentlySetting].fontColor = ST7735_WHITE;
+	currentlySetting++;
+	if(currentlySetting == 4) {
+		// do something for AM/PM
+	} else if(currentlySetting > 4 ) {
+		// done setting time, return to main
+	} else { 	// change color for next thing to set
+		timeSetting[currentlySetting].fontColor = ST7735_YELLOW;
+	}
+}
+
+void IncreaseCurrent() {
+	char currentVal = timeSetting[currentlySetting].num;
+	currentVal = currentVal - '0';
+	switch(currentlySetting) {
+		case tensH:
+			if(currentVal == 1) {
+				currentVal = 0 + '0';
+			}
+			DrawTensPlaceH();
+			break;
+		case onesH:
+			if(currentVal == 9) {
+				currentVal = 0 + '0';
+			}
+			DrawOnesPlaceH();
+			break;
+		case tensM:
+			if(currentVal == 5) {
+				currentVal = 0 + '0';
+			}
+			DrawTensPlaceM();
+			break;
+		case onesM:
+			if(currentVal == 9) {
+				currentVal = 0 + '0';
+			}
+			DrawOnesPlaceM();
+			break;
+		case AMPM:
+			break;
+	}
 }
 
 void DrawTensPlaceH() {

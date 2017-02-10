@@ -17,6 +17,18 @@ void DigitalDisplayInit(void);
 //Output: none
 void DigitalTimerDisplay(SwitchStates);
 
+//----------UpdateSet-----------
+//Changes what part of the time you're setting to the next variable
+//Input: none
+//Output: none
+void UpdateSet(void);
+
+//----------IncreaseCurrent-----------
+//Increases current variable that you're changing by 1. Displays variable
+//Input: none
+//Output: none
+void IncreaseCurrent(void);
+
 //----------DrawTensPlaceH-----------
 //Draw tens place of hour
 //Input: none
