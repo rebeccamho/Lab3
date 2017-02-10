@@ -61,7 +61,6 @@ void Timer0A_Handler(void){
   TIMER0_ICR_R = TIMER_ICR_TATOCINT;    // acknowledge timer0A timeout
 	long sr = StartCritical();
   PF2 ^= 0x04;                   // heartbeat
-	//PF1 ^= 0x02;
 	second++;
 	newMinute = false;
 	newHour = false;
@@ -79,13 +78,13 @@ void Timer0A_Handler(void){
 			}
 		}
 	}
+	
 	EndCritical(sr);
 	
 	if(newMinute)
 		DisplayMinute();
 	if(newHour)
 		DisplayHour();
-	
 }
 
 uint32_t GetHour(){

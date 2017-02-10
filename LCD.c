@@ -50,7 +50,7 @@ void DisplayMinute(){
 	
 }
 
-void initDigitalTimerDisplay(void){
+void InitDigitalTimerDisplay(void){
 	yellow = ST7735_Color565(0xf4, 0xff, 0x87);
 	tensPlaceM = 0;
 	tensPlaceH = 0;

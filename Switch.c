@@ -28,25 +28,23 @@ void PortF_Init() {
   //GPIO_PORTF_PCTL_R = (GPIO_PORTF_PCTL_R&0xFFFFF00F)+0x00000000;
   GPIO_PORTF_AMSEL_R = 0;               // disable analog functionality on PF
 	GPIO_PORTF_PUR_R |= 0x10;         // 5) pullup for PF4
+	
+	// not sure if this will work
+	GPIO_PORTF_IS_R &= ~0x10;			// PF4 is edge-sensitive
+	GPIO_PORTF_IBE_R &= ~0x10;		// PF4 is not both edges
+	GPIO_PORTF_IEV_R |= 0x10;			// PF4 rising edge event
+	GPIO_PORTF_ICR_R = 0x10;			// clear flag5-4
+	GPIO_PORTF_IM_R |= 0x10;			// arm interrupts on PF4
+	GPIO_PORTF_PCTL_R &= ~0x000F0000; // configure PF4 as GPIO
+
+	GPIO_PORTF_IM_R |= 0x10;      // (f) arm interrupt on PF4 *** No IME bit as mentioned in Book ***
+  NVIC_PRI7_R = (NVIC_PRI7_R&0xFF00FFFF)|0x00A00000; // priority 5
+  NVIC_EN0_R = 0x40000000;      // (h) enable interrupt 30 in NVIC
 
   PF2 = 0;                  				    // turn off LED
 	PF1 = 0;
 }
 //pf4 for speaker, switches on pf0-3
-
-void PortD_Init() {
-	SYSCTL_RCGCGPIO_R |= 0x08;            // activate port D clock
-	while((SYSCTL_PRGPIO_R&0x08)==0){}; 	// allow time for clock to start
-
-	GPIO_PORTD_DIR_R |= 0x02;             // make PD2 out 
-  GPIO_PORTD_AFSEL_R &= ~0x02;          // disable alt funct on PD2
-  GPIO_PORTD_DEN_R |= 0x02;             // enable digital I/O on PD2
-                                        // configure PD2 as GPIO
-  //GPIO_PORTF_PCTL_R = (GPIO_PORTF_PCTL_R&0xFFFFF00F)+0x00000000;
-  GPIO_PORTD_AMSEL_R = 0;               // disable analog functionality on PD
-
-	//PF3 = 0;
-}
 
 void PortE_Init() { // switches are connected to PortE
 	SYSCTL_RCGCGPIO_R |= 0x10;		// activate clock for Port E
@@ -80,6 +78,13 @@ void GPIOPortE_Handler(void) {
 	}
 }
 
+void GPIOPortF_Handler(void){
+  GPIO_PORTF_ICR_R = 0x10;      // acknowledge flag4
+	DelayWait10ms(8);
+	if(GPIO_PORTF_DATA_R&0x10) {
+		//PF1 ^= 0x02;
+	}
+}
 
 // Subroutine to wait 10 msec
 // Inputs: None
