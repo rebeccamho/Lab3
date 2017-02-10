@@ -5,7 +5,7 @@
 
 // TODO: DecreaseCurrent, AM/PM functionality, testing, going from main to this screen, going from this screen to main,
 // making sure set time can be displayed and also *UNINTERRUPTED* -- create bool for settime so display hour and minute 
-// not called in this case
+// not called in this case, figure out weird case for hour
 
 #include "LCD.h"
 #include "Timer.h"
@@ -71,7 +71,6 @@ void DisplayHour(){
 	//display hour on lcd
 	char h = (char)GetHour();
 	if(h == 10){
-		//tensPlaceH = 1;
 		tensPlaceH.num = '1';
 		DrawTensPlaceH();
 	}
@@ -99,7 +98,6 @@ void DisplayMinute(){
 		else{
 			DrawTensPlaceM();			
 			DrawOnesPlaceM();
-			//ST7735_DrawChar(69, 0, tensPlaceM + '0', ST7735_WHITE, 0, 5);
 		}
 	}
 	else{
@@ -129,25 +127,37 @@ void IncreaseCurrent() {
 		case tensH:
 			if(currentVal == 1) {
 				currentVal = 0 + '0';
+			} else {
+				currentVal = currentVal + 1 + '0';
 			}
+			timeSetting[currentlySetting].num = currentVal;
 			DrawTensPlaceH();
 			break;
 		case onesH:
 			if(currentVal == 9) {
 				currentVal = 0 + '0';
+			} else {
+				currentVal = currentVal + 1 + '0';
 			}
+			timeSetting[currentlySetting].num = currentVal;
 			DrawOnesPlaceH();
 			break;
 		case tensM:
 			if(currentVal == 5) {
 				currentVal = 0 + '0';
+			} else {
+				currentVal = currentVal + 1 + '0';
 			}
+			timeSetting[currentlySetting].num = currentVal;
 			DrawTensPlaceM();
 			break;
 		case onesM:
 			if(currentVal == 9) {
 				currentVal = 0 + '0';
+			} else {
+				currentVal = currentVal + 1 + '0';
 			}
+			timeSetting[currentlySetting].num = currentVal;
 			DrawOnesPlaceM();
 			break;
 		case AMPM:
