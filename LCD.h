@@ -25,3 +25,9 @@ void DisplayMinute(void);
 //Input: none
 //Output: none
 void InitDigitalTimerDisplay(void);
+
+//----------InitDigitalTimerDisplay-----------
+//Initializes screen for digital timer. Time starts at 1:00
+//Input: none
+//Output: none
+void InitAnalogTimerDisplay(void);

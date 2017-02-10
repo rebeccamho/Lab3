@@ -32,7 +32,8 @@ int main(void){
 	//Timer1A_Init100HzInt();
 	PortF_Init();
 	PortE_Init();
-	InitDigitalTimerDisplay();
+//	InitDigitalTimerDisplay();
+	InitAnalogTimerDisplay();
 	EnableInterrupts();
 	while(1){
 		OutputSound(1); // toggles PF1 every 1 ms

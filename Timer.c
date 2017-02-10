@@ -81,10 +81,10 @@ void Timer0A_Handler(void){
 	
 	EndCritical(sr);
 	
-	if(newMinute)
-		DisplayMinute();
-	if(newHour)
-		DisplayHour();
+//	if(newMinute)
+//		DisplayMinute();
+//	if(newHour)
+//		DisplayHour();
 }
 
 uint32_t GetHour(){
