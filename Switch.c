@@ -4,6 +4,7 @@
 // 2/8/17
 
 #include "Switch.h"
+#include "LCD.h"
 #include "../ValvanoWareTM4C123/ValvanoWareTM4C123/inc/tm4c123gh6pm.h"
 
 #define PF1             (*((volatile uint32_t *)0x40025008))
@@ -61,28 +62,28 @@ void PortE_Init() { // switches are connected to PortE
 }
 
 void GPIOPortE_Handler(void) {
-	if(GPIO_PORTE_RIS_R&0x10) {		// poll PE4
+	if(GPIO_PORTE_RIS_R&0x10) {		// poll PE4, UP switch
 		GPIO_PORTE_ICR_R = 0x10;		// acknowledge flag4
 		DelayWait10ms(10);
 		if(GPIO_PORTE_DATA_R&0x10) {
-			//PF2 ^= 0x04;
+			UpPressed();
 		}
 
 	}
-	if(GPIO_PORTE_RIS_R&0x20) {		// poll PE5
+	if(GPIO_PORTE_RIS_R&0x20) {		// poll PE5, DOWN switch
 		GPIO_PORTE_ICR_R = 0x20;		// acknowledge flag5
 		DelayWait10ms(10);
 		if(GPIO_PORTE_DATA_R&0x20) {
-			//PF1 ^= 0x02;
+			DownPressed();
 		}
 	}
 }
 
-void GPIOPortF_Handler(void){
+void GPIOPortF_Handler(void){		// PF4, SELECT switch
   GPIO_PORTF_ICR_R = 0x10;      // acknowledge flag4
 	DelayWait10ms(8);
 	if(GPIO_PORTF_DATA_R&0x10) {
-		//PF1 ^= 0x02;
+		SelectPressed();
 	}
 }
 
