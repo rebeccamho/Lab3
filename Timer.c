@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "LCD.h"
+#include "DigitalDisplay.h"
 
 #define PF1             (*((volatile uint32_t *)0x40025008))
 #define PF2             (*((volatile uint32_t *)0x40025010))

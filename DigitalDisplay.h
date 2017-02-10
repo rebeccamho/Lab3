@@ -53,3 +53,17 @@ void DrawTensPlaceM(void);
 //Output: none
 void DrawOnesPlaceM(void);
 
+//----------DisplayHour-------------
+//Displays digital hour of day. Used whenever switching to digital clock display,
+//or whenever hour changes when digital timer is already displayed
+//Input: none
+//Output: Display hour of the day in digital timer
+void DisplayHour(void);
+
+//----------DisplayMinute-----------
+//Displays digital minute of day. Used whenever switching to digital clock display,
+//or whenever minute changes when digital timer is already displayed
+//Input: none
+//Output: Display minute of the hour in digital timer
+void DisplayMinute(void);
+

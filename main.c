@@ -36,7 +36,6 @@ int main(void){
 	//InitDigitalTimerDisplay();
 	//DisplayMainMenu(0);
 	DigitalDisplayInit();
-	DigitalTimerDisplay();
 	EnableInterrupts();
 	while(1){
 		OutputSound(1); // toggles PF1 every 1 ms
