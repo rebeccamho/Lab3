@@ -23,6 +23,7 @@ struct Alarm {
 	uint16_t hour;
 	uint16_t minute;
 	bool AM;
+	bool pitch;
 };
 typedef struct Alarm Alarm;
 
@@ -34,6 +35,7 @@ uint16_t hour = 1;
 Alarm alarmList[size];
 uint32_t alarmEntries = 0;
 bool alarmOn = false;
+bool alarmPitch = false; // false for high, true for low
 
 // This debug function initializes Timer0A to request interrupts
 // at a 100 Hz frequency.  It is similar to FreqMeasure.c.
@@ -119,11 +121,12 @@ void SetSecond(uint32_t s) {
 	EndCritical(sr);
 }
 
-void AddAlarm(uint16_t hour, uint16_t minute, bool AM) {
+void AddAlarm(uint16_t hour, uint16_t minute, bool AM, bool pitch) {
 	if(alarmEntries >= size) { return; } // can't add another alarm
 	alarmList[alarmEntries].hour = hour;
 	alarmList[alarmEntries].minute = minute;
 	alarmList[alarmEntries].AM = AM;
+	alarmList[alarmEntries].pitch = pitch;
 	alarmEntries++;
 }
 
@@ -132,6 +135,7 @@ void CheckAlarms() {
 		if(hour == alarmList[i].hour && minute == alarmList[i].minute) {
 			if(alarmList[i].AM == GetAM()) {
 				alarmOn = true;
+				alarmPitch = alarmList[i].pitch;
 			}
 			break;
 		}
@@ -140,6 +144,14 @@ void CheckAlarms() {
 
 bool GetAlarmOn() {
 	return alarmOn;
+}
+
+uint16_t GetAlarmPitch() {
+	if(alarmPitch) { // alarm is low
+		return 10;
+	} else {
+		return 1;
+	}
 }
 
 void TurnAlarmOff() {

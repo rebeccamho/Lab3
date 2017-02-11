@@ -27,6 +27,7 @@ digitalState currentSelect = Military;
 bool AM = true; // true if AM, false if PM
 bool alarmAM = true; // AM/PM setting for alarm only
 bool	military = false;
+bool pitch = false; // false for high, true for low
 
 		
 void DigitalTimerDisplay(SwitchStates state){
@@ -91,6 +92,9 @@ void DigitalTimerDisplay(SwitchStates state){
 		case AlarmInit:
 			alarmSetting[0].fontColor = ST7735_YELLOW;
 			Draw12hrTime();
+			ST7735_DrawString(1, 10, "Alarm Pitch", ST7735_WHITE);
+			ST7735_DrawString(1, 11, "High", ST7735_RED);
+			ST7735_DrawString(1, 12, "Low", ST7735_RED);
 			break;
 	}
 }
@@ -174,7 +178,6 @@ void UpdateSet() {
 		currentlySetting = tensH;
 		uint32_t hour = (timeSetting[tensH].num - '0')*10 + (timeSetting[onesH].num - '0');
 		uint32_t minute = (timeSetting[tensM].num - '0')*10 + (timeSetting[onesM].num - '0');
-
 		SetHour(hour);
 		SetMinute(minute);
 		SetSecond(0);		
@@ -189,14 +192,16 @@ void AlarmUpdateSet() {
 	alarmSetting[currentlySetting].fontColor = ST7735_WHITE;
 	DrawDigit(currentlySetting);
 	currentlySetting++;
-	if(currentlySetting == 4) {
+	if(currentlySetting == 4) { // set AM/PM
 		if(alarmAM) { DrawAM(ST7735_YELLOW); }
 		else { DrawPM(ST7735_YELLOW); }
-	} else if(currentlySetting > 4 ) { // done setting time, set timer settings and return to main
+	} else if(currentlySetting == 5) { // change alarm pitch
+		ST7735_DrawString(1, 11, "High", ST7735_YELLOW);
+	} else if(currentlySetting > 5 ) { // done setting time, set timer settings and return to main
 		currentlySetting = tensH;
 		uint32_t hour = (alarmSetting[tensH].num - '0')*10 + (alarmSetting[onesH].num - '0');
 		uint32_t minute = (alarmSetting[tensM].num - '0')*10 + (alarmSetting[onesM].num - '0');
-		AddAlarm(hour, minute, alarmAM);
+		AddAlarm(hour, minute, alarmAM, pitch);
 		ResetAlarmValues();
 		DisplayMainMenu(3);
 	} else { 	// change color for next thing to set
@@ -262,6 +267,8 @@ void IncreaseCurrent() {
 				AM = true;
 			}
 			break;
+		case AlarmPitch: // does not occur
+			break;
 	}
 }
 
@@ -322,6 +329,16 @@ void AlarmIncreaseCurrent() {
 				alarmAM = true;
 			}
 			break;
+		case AlarmPitch:
+			if(pitch) { // set pitch to high
+				pitch = false;
+				ST7735_DrawString(1, 11, "High", ST7735_YELLOW);
+				ST7735_DrawString(1, 12, "Low", ST7735_RED);
+			} else { // set pitch to low
+				pitch = true;
+				ST7735_DrawString(1, 11, "High", ST7735_RED);
+				ST7735_DrawString(1, 12, "Low", ST7735_YELLOW);			
+			}
 	}
 }
 
@@ -380,6 +397,8 @@ void DecreaseCurrent() {
 				DrawAM(ST7735_YELLOW);
 				AM = true;
 			}
+			break;
+		case AlarmPitch: // does not occur
 			break;
 	}
 }
@@ -440,6 +459,16 @@ void AlarmDecreaseCurrent() {
 				alarmAM = true;
 			}
 			break;
+		case AlarmPitch:
+			if(pitch) { // set pitch to high
+				pitch = false;
+				ST7735_DrawString(1, 11, "High", ST7735_YELLOW);
+				ST7735_DrawString(1, 12, "Low", ST7735_RED);
+			} else { // set pitch to low
+				pitch = true;
+				ST7735_DrawString(1, 11, "High", ST7735_RED);
+				ST7735_DrawString(1, 12, "Low", ST7735_YELLOW);			
+			}
 	}
 }
 
@@ -511,6 +540,7 @@ void ResetAlarmValues() {
 		alarmSetting[i].num = '0';
 	}
 	alarmAM = true;
+	pitch = false;
 }
 
 bool GetAM() {

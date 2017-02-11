@@ -44,7 +44,7 @@ int main(void){
 	EnableInterrupts();
 	while(1){
 		if(GetAlarmOn()) { // if an alarm is on
-			OutputSound(1); // toggles PF1 every 1 ms
+			OutputSound(GetAlarmPitch()); // toggles PF1 every 1 ms
 		}
 		CheckSwitches();
 	}

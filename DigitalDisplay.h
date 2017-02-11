@@ -20,7 +20,8 @@ typedef enum  { tensH = 0,
 								onesH = 1,
 								tensM = 2,
 								onesM = 3,
-								AMPM = 4} SetState;		
+								AMPM = 4,
+								AlarmPitch = 5} SetState;		
 
 //----------DigitalDisplayInit-----------
 //Initializes variables used in DigitalDisplay

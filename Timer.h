@@ -56,15 +56,21 @@ void CheckAlarms(void);
 
 //------------AddAlarm----------------------
 // Add alarm to list of alarms
-// Input: hour, minute, and AM/PM of alarm
+// Input: hour, minute, AM/PM of alarm, pitch of alarm (false for high, true for low)
 // Output: none
-void AddAlarm(uint16_t, uint16_t, bool);
+void AddAlarm(uint16_t, uint16_t, bool, bool);
 
 //------------GetAlarmOn----------------------
 // Returns if an alarm should be on
 // Input: none
 // Output: true is alarm is on, false otherwise
 bool GetAlarmOn(void);
+
+//------------GetAlarmPitch----------------------
+// Returns the pitch of the alarm
+// Input: none
+// Output: 1 if high pitch, 10 if low pitch
+uint16_t GetAlarmPitch(void);
 
 //------------TurnAlarmOff----------------------
 // Sets alarmOn to false
