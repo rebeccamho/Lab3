@@ -9,6 +9,7 @@
 #include "Timer.h"
 #include "../ValvanoWareTM4C123/ValvanoWareTM4C123/ST7735_4C123/ST7735.h"
 #include "../Lab1/fixed.h"
+#include "DigitalDisplay.h"
 
 
 // 180 points on a circle of radius 2.000
@@ -25,21 +26,17 @@ struct MenuOptions {
 typedef struct MenuOptions MenuOptions;
 
 
-typedef enum  { MainMenu,
-								Digital,
-								Analog,
-								SetTime,
-								SetAlarm} LCDstate;							
-
-LCDstate currentState;
+MenuOptions mainMenuState[4] = {{"Analog Clock",ST7735_YELLOW,2},{"Digital Clock",ST7735_RED,3},
+		{"Set Time",ST7735_RED,4},{"Set Alarm",ST7735_RED,5}};
+		// index 0 is analog, 1 is digital, 2 is settime, 3 is setalarm
+		
 bool up = false;	// up switch state
 bool down = false;	// down switch state
 bool select = false;	// select switch state
-								
-MenuOptions mainMenuState[4] = {{"Analog Clock",ST7735_YELLOW,2},{"Digital Clock",ST7735_RED,3},
-		{"Set Time",ST7735_RED,4},{"Set Alarm",ST7735_RED,5}};
-uint16_t currentMenuIndex = 0; // which index in array main menu is highlighting
+LCDstate currentState;	
+int16_t currentMenuIndex = 0; // which index in array main menu is highlighting
 
+				
 void DisplayMainMenu(int16_t n) {
 	currentState = MainMenu;
 	if(n > 3) { n = 0; } // n exceeds array indices
@@ -57,24 +54,11 @@ void DisplayMainMenu(int16_t n) {
 	}	
 }
 
-void DisplaySetTime(SwitchStates state) {
-	switch(state) {
-		case None:
-			//InitDigitalTimerDisplay();
-			break;
-		case Select:
-			break;
-		case Up:
-			break;
-		case Down:
-			break;
-	}
-
-}
 
 void CheckSwitches() {
 	if(select) {
 		ResetSwitches();
+		SelectFunction();
 		
 	} else if(down) {
 		ResetSwitches();
@@ -88,23 +72,31 @@ void CheckSwitches() {
 
 void SelectFunction() {
 	switch(currentState) {
-		case MainMenu:
+		case MainMenu:		// in main menu
 			switch(currentMenuIndex) {
 				case 0:		// analog clock
+					currentState = Analog;
 					break;
 				case 1:		// digital clock
+					currentState = Digital;
+					DigitalTimerDisplay(None);
 					break;
 				case 2:		// set time
+					currentState = SetTime;
+					DigitalTimerDisplay(SetInit);
 					break;
 				case 3:		// set alarm
+					currentState = SetAlarm;
 					break;
 			}
 			break;
 		case Digital:
+			DigitalTimerDisplay(Select);
 			break;
 		case Analog:
 			break;
-		case SetTime:
+		case SetTime:		// in SetTime
+			UpdateSet();
 			break;
 		case SetAlarm:
 			break;
@@ -117,10 +109,12 @@ void DownFunction() {
 			DisplayMainMenu(currentMenuIndex+1);
 			break;
 		case Digital:
+			DigitalTimerDisplay(Down);
 			break;
 		case Analog:
 			break;
-		case SetTime:
+		case SetTime:		// in SetTime
+			DecreaseCurrent();
 			break;
 		case SetAlarm:
 			break;
@@ -133,10 +127,12 @@ void UpFunction() {
 			DisplayMainMenu(currentMenuIndex-1);
 			break;
 		case Digital:
+			DigitalTimerDisplay(Up);
 			break;
 		case Analog:
 			break;
 		case SetTime:
+			IncreaseCurrent();
 			break;
 		case SetAlarm:
 			break;
@@ -232,4 +228,8 @@ void SelectPressed() {
 
 void DownPressed() {
 	down = true;
+}
+
+LCDstate GetCurrentState() {
+	return currentState;
 }

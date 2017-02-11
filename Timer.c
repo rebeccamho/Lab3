@@ -82,10 +82,10 @@ void Timer0A_Handler(void){
 	
 	EndCritical(sr);
 	
-//	if(newMinute)
-//		DisplayMinute();
-//	if(newHour)
-//		DisplayHour();
+	if(newMinute && GetCurrentState() != SetTime)
+		DisplayMinute();
+	if(newHour && GetCurrentState() != SetTime)
+		DisplayHour();
 }
 
 uint32_t GetHour(){
@@ -96,6 +96,23 @@ uint32_t GetMinute(){
 	return minute;
 }
 
+void SetHour(uint32_t h) {
+	long sr = StartCritical();
+	hour = h;
+	EndCritical(sr);
+}
+
+void SetMinute(uint32_t m) {
+	long sr = StartCritical();
+	minute = m;
+	EndCritical(sr);
+}
+
+void SetSecond(uint32_t s) {
+	long sr = StartCritical();
+	second = s;
+	EndCritical(sr);
+}
 
 /* alarm search, put this somewhere else
 	for(int i = 0; i < alarmEntries; i++) { // see if an alarm is set for this time

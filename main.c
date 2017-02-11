@@ -27,6 +27,7 @@ void WaitForInterrupt(void);  // low power mode
 void DelayWait10ms(uint32_t);
 
 int main(void){
+
 	PLL_Init(Bus80MHz);                   // 80 MHz
 	Output_Init();
 	Timer0A_Init1HzInt();
@@ -34,10 +35,10 @@ int main(void){
 	PortF_Init();
 	PortE_Init();
 //	InitDigitalTimerDisplay();
-	InitAnalogTimerDisplay();
+	//InitAnalogTimerDisplay();
 	//InitDigitalTimerDisplay();
-	//DisplayMainMenu(0);
-	DigitalDisplayInit();
+	DisplayMainMenu(0);
+	//DigitalDisplayInit();
 	EnableInterrupts();
 	while(1){
 		OutputSound(1); // toggles PF1 every 1 ms

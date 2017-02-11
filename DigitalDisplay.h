@@ -5,6 +5,12 @@
 
 #include <stdbool.h>
 
+typedef enum  { tensH = 0,
+								onesH = 1,
+								tensM = 2,
+								onesM = 3,
+								AMPM = 4} SetState;		
+
 //----------DigitalDisplayInit-----------
 //Initializes variables used in DigitalDisplay
 //Input: none
@@ -29,29 +35,17 @@ void UpdateSet(void);
 //Output: none
 void IncreaseCurrent(void);
 
+//----------DecreaseCurrent-----------
+//Decreases current variable that you're changing by 1. Displays variable
+//Input: none
+//Output: none
+void DecreaseCurrent(void);
+
 //----------DrawTensPlaceH-----------
 //Draw tens place of hour
 //Input: none
 //Output: none
-void DrawTensPlaceH(void);
-
-//----------DrawOnesPlaceH-----------
-//Draw ones place of hour
-//Input: none
-//Output: none
-void DrawOnesPlaceH(void);
-
-//----------DrawTensPlaceM-----------
-//Draw tens place of minute
-//Input: none
-//Output: none
-void DrawTensPlaceM(void);
-
-//----------DrawOnesPlaceM-----------
-//Draw ones place of minute
-//Input: none
-//Output: none
-void DrawOnesPlaceM(void);
+void DrawDigit(SetState);
 
 //----------DisplayHour-------------
 //Displays digital hour of day. Used whenever switching to digital clock display,
@@ -67,3 +61,26 @@ void DisplayHour(void);
 //Output: Display minute of the hour in digital timer
 void DisplayMinute(void);
 
+//----------DrawAM-----------
+//Draws AM below time
+//Input: none
+//Output: none
+void DrawAM(int16_t);
+
+//----------DrawPM-----------
+//Draws PM below time
+//Input: none
+//Output: none
+void DrawPM(int16_t);
+
+//----------Draw12hrTime-----------
+//Draws current time in 12 hr format
+//Input: none
+//Output: none
+void Draw12hrTime(void);
+
+//----------DrawMilitaryTime-----------
+//Draws current time in military format
+//Input: none
+//Output: none
+void DrawMilitaryTime(void);

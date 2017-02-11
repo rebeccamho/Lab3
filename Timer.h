@@ -28,3 +28,10 @@ uint32_t GetHour(void);
 // Input: none
 // Output: The current minute of the timer
 uint32_t GetMinute(void);
+
+
+void SetHour(uint32_t);
+
+void SetMinute(uint32_t);
+
+void SetSecond(uint32_t);

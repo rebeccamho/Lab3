@@ -3,12 +3,22 @@
 // Matt Owens & Rebecca Ho
 // 2/8/17
 
+#ifndef LCD_H
+#define LCD_H
+
 #include <stdint.h>
 
 typedef enum  { Select,
 								Up,
 								Down,
-								None} SwitchStates;	
+								None,
+								SetInit} SwitchStates;	
+
+typedef enum  { MainMenu,
+								Digital,
+								Analog,
+								SetTime,
+								SetAlarm} LCDstate;										
 
 //----------DisplayMainMenu-----------
 //Displays main menu with clock setting options
@@ -71,4 +81,12 @@ void ResetSwitches(void);
 //Input: none
 //Output: none
 void InitAnalogTimerDisplay(void);
+
+//----------GetCurrentState-----------
+//Returns current state of LCD
+//Input: none
+//Output: state of LCD
+LCDstate GetCurrentState(void);
+
+#endif
 
