@@ -10,16 +10,6 @@
 
 // TODO turn military off when return to main menu, change color of back/military according to currentSelect
 
-struct TimeSet {
-	int16_t x;
-	int16_t y;
-	char num;
-	int16_t fontColor;
-	int16_t backColor;
-	uint8_t size;
-};
-typedef struct TimeSet TimeSet;
-
 typedef enum  { Military,
 								Back} digitalState;	
 
@@ -27,9 +17,15 @@ TimeSet timeSetting[4] = {{5,1,'0',ST7735_WHITE,ST7735_BLACK,5},{33,1,'1',ST7735
 		{69,1,'0',ST7735_WHITE,ST7735_BLACK,5},{97,1,'0',ST7735_WHITE,ST7735_BLACK,5}};
 		// index 0 is hour tens, 1 is hour ones, 2 is minute tens, 3 is minute ones
 
+		
+TimeSet alarmSetting[4] = {{5,1,'0',ST7735_WHITE,ST7735_BLACK,5},{33,1,'1',ST7735_WHITE,ST7735_BLACK,5},
+		{69,1,'0',ST7735_WHITE,ST7735_BLACK,5},{97,1,'0',ST7735_WHITE,ST7735_BLACK,5}};
+	
+
 SetState currentlySetting = tensH;
 digitalState currentSelect = Military;
 bool AM = true; // true if AM, false if PM
+bool alarmAM = true; // AM/PM setting for alarm only
 bool	military = false;
 
 		
@@ -89,16 +85,12 @@ void DigitalTimerDisplay(SwitchStates state){
 			}
 			break;
 		case SetInit:
-			ST7735_FillScreen(ST7735_BLACK); 
-			ST7735_SetCursor(0,0);
-			ST7735_DrawChar(53, 0, ':', ST7735_WHITE, ST7735_BLACK, 5);
 			timeSetting[0].fontColor = ST7735_YELLOW;
-			for(int i = 0; i < 4; i++) { // iterate through timeSettings
-				TimeSet current = timeSetting[i];
-				ST7735_DrawChar(current.x, current.y, current.num, current.fontColor, current.backColor, current.size);
-			}			
-			if(AM) { DrawAM(ST7735_WHITE); }
-			else { DrawPM(ST7735_WHITE); }
+			Draw12hrTime();
+			break;	
+		case AlarmInit:
+			alarmSetting[0].fontColor = ST7735_YELLOW;
+			Draw12hrTime();
 			break;
 	}
 }
@@ -171,7 +163,7 @@ void DisplayMinute(){
 	
 }
 
-void UpdateSet() {
+void UpdateSet() {	
 	timeSetting[currentlySetting].fontColor = ST7735_WHITE;
 	DrawDigit(currentlySetting);
 	currentlySetting++;
@@ -182,12 +174,33 @@ void UpdateSet() {
 		currentlySetting = tensH;
 		uint32_t hour = (timeSetting[tensH].num - '0')*10 + (timeSetting[onesH].num - '0');
 		uint32_t minute = (timeSetting[tensM].num - '0')*10 + (timeSetting[onesM].num - '0');
+
 		SetHour(hour);
 		SetMinute(minute);
 		SetSecond(0);		
 		DisplayMainMenu(2);
 	} else { 	// change color for next thing to set
 		timeSetting[currentlySetting].fontColor = ST7735_YELLOW;
+		DrawDigit(currentlySetting);	
+	}
+}
+
+void AlarmUpdateSet() {	
+	alarmSetting[currentlySetting].fontColor = ST7735_WHITE;
+	DrawDigit(currentlySetting);
+	currentlySetting++;
+	if(currentlySetting == 4) {
+		if(alarmAM) { DrawAM(ST7735_YELLOW); }
+		else { DrawPM(ST7735_YELLOW); }
+	} else if(currentlySetting > 4 ) { // done setting time, set timer settings and return to main
+		currentlySetting = tensH;
+		uint32_t hour = (alarmSetting[tensH].num - '0')*10 + (alarmSetting[onesH].num - '0');
+		uint32_t minute = (alarmSetting[tensM].num - '0')*10 + (alarmSetting[onesM].num - '0');
+		AddAlarm(hour, minute, alarmAM);
+		ResetAlarmValues();
+		DisplayMainMenu(3);
+	} else { 	// change color for next thing to set
+		alarmSetting[currentlySetting].fontColor = ST7735_YELLOW;
 		DrawDigit(currentlySetting);	
 	}
 }
@@ -252,6 +265,66 @@ void IncreaseCurrent() {
 	}
 }
 
+void AlarmIncreaseCurrent() {
+	char currentVal = alarmSetting[currentlySetting].num;
+	currentVal = currentVal - '0';
+	switch(currentlySetting) {
+		case tensH:
+			if(currentVal == 1) {
+				currentVal = 0 + '0';
+			} else {
+				currentVal = currentVal + 1 + '0';
+			}
+			
+			alarmSetting[currentlySetting].num = currentVal;
+			DrawDigit(tensH);
+			break;
+		case onesH:
+			if(alarmSetting[tensH].num == '1') { // don't want to exceed 12
+				if(currentVal == 2) {	
+					currentVal = 0 + '0';
+				} else {
+					currentVal = currentVal + 1 + '0';
+				}
+			} else if(currentVal == 9) { 
+				currentVal = 0 + '0';
+			} else {
+				currentVal = currentVal + 1 + '0';
+			}
+			alarmSetting[currentlySetting].num = currentVal;
+			DrawDigit(onesH);
+			break;
+		case tensM:
+			if(currentVal == 5) {
+				currentVal = 0 + '0';
+			} else {
+				currentVal = currentVal + 1 + '0';
+			}
+			alarmSetting[currentlySetting].num = currentVal;
+			DrawDigit(tensM);
+			break;
+		case onesM:
+			if(currentVal == 9) {
+				currentVal = 0 + '0';
+			} else {
+				currentVal = currentVal + 1 + '0';
+			}
+			alarmSetting[currentlySetting].num = currentVal;
+			DrawDigit(onesM);
+			break;
+		case AMPM:
+			if(alarmAM) { 
+				DrawPM(ST7735_YELLOW); 
+				alarmAM = false;
+			}
+			else { 
+				DrawAM(ST7735_YELLOW);
+				alarmAM = true;
+			}
+			break;
+	}
+}
+
 void DecreaseCurrent() {
 	char currentVal = timeSetting[currentlySetting].num;
 	currentVal = currentVal - '0';
@@ -311,11 +384,74 @@ void DecreaseCurrent() {
 	}
 }
 
+void AlarmDecreaseCurrent() {
+	char currentVal = alarmSetting[currentlySetting].num;
+	currentVal = currentVal - '0';
+	switch(currentlySetting) {
+		case tensH:
+			if(currentVal == 0) {
+				currentVal = 1 + '0';
+			} else {
+				currentVal = currentVal - 1 + '0';
+			}
+			alarmSetting[currentlySetting].num = currentVal;
+			DrawDigit(tensM);
+			break;
+		case onesH:
+			if(alarmSetting[tensH].num == '1') { // don't want to exceed 12
+				if(currentVal == 0) {	
+					currentVal = 2 + '0';
+				} else {
+					currentVal = currentVal - 1 + '0';
+				}
+			} else if(currentVal == 0) { 
+				currentVal = 9 + '0';
+			} else {
+				currentVal = currentVal - 1 + '0';
+			}
+			alarmSetting[currentlySetting].num = currentVal;
+			DrawDigit(onesH);
+			break;
+		case tensM:
+			if(currentVal == 0) {
+				currentVal = 5 + '0';
+			} else {
+				currentVal = currentVal - 1 + '0';
+			}
+			alarmSetting[currentlySetting].num = currentVal;
+			DrawDigit(tensM);
+			break;
+		case onesM:
+			if(currentVal == 0) {
+				currentVal = 9 + '0';
+			} else {
+				currentVal = currentVal - 1 + '0';
+			}
+			alarmSetting[currentlySetting].num = currentVal;
+			DrawDigit(onesM);
+			break;
+		case AMPM:
+			if(alarmAM) { 
+				DrawPM(ST7735_YELLOW); 
+				alarmAM = false;
+			}
+			else { 
+				DrawAM(ST7735_YELLOW);
+				alarmAM = true;
+			}
+			break;
+	}
+}
 
 void DrawDigit(SetState s) {
 	if(s > 3) { return; } // exceeds timeSetting array
-	ST7735_DrawChar(timeSetting[s].x, timeSetting[s].y, timeSetting[s].num, timeSetting[s].fontColor, 
-			timeSetting[s].backColor, timeSetting[s].size);
+	if(GetCurrentState() == SetAlarm) {
+		ST7735_DrawChar(alarmSetting[s].x, alarmSetting[s].y, alarmSetting[s].num, alarmSetting[s].fontColor, 
+			alarmSetting[s].backColor, alarmSetting[s].size);
+	} else {
+		ST7735_DrawChar(timeSetting[s].x, timeSetting[s].y, timeSetting[s].num, timeSetting[s].fontColor, 
+				timeSetting[s].backColor, timeSetting[s].size);
+	}
 }
 
 void DrawAM(int16_t color) {
@@ -332,12 +468,18 @@ void Draw12hrTime() {
 	ST7735_FillScreen(ST7735_BLACK); 
 	ST7735_SetCursor(0,0);
 	ST7735_DrawChar(53, 0, ':', ST7735_WHITE, ST7735_BLACK, 5);
+	TimeSet current;
 	for(int i = 0; i < 4; i++) { // iterate through timeSettings
-		TimeSet current = timeSetting[i];
+		if(GetCurrentState() == SetAlarm) {
+			current = alarmSetting[i];
+		} else { current = timeSetting[i]; }
 		ST7735_DrawChar(current.x, current.y, current.num, current.fontColor, current.backColor, current.size);
 	}
-	if(AM) { DrawAM(ST7735_WHITE); }
-	else { DrawPM(ST7735_WHITE); }
+	if(GetCurrentState() == SetAlarm) { DrawAM(ST7735_WHITE); }
+	else {
+		if(AM) { DrawAM(ST7735_WHITE); }
+		else { DrawPM(ST7735_WHITE); }
+	}
 }
 
 void DrawMilitaryTime() {
@@ -362,4 +504,15 @@ void DrawMilitaryTime() {
 			TimeSet current = timeSetting[i];
 			ST7735_DrawChar(current.x, current.y, current.num, current.fontColor, current.backColor, current.size);
 		}
+}
+
+void ResetAlarmValues() {
+	for(int i = 0; i < 4; i++) {
+		alarmSetting[i].num = '0';
+	}
+	alarmAM = true;
+}
+
+bool GetAM() {
+	return AM;
 }

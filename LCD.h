@@ -12,7 +12,8 @@ typedef enum  { Select,
 								Up,
 								Down,
 								None,
-								SetInit} SwitchStates;	
+								SetInit,
+								AlarmInit} SwitchStates;	
 
 typedef enum  { MainMenu,
 								Digital,

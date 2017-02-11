@@ -22,6 +22,7 @@ void WaitForInterrupt(void);  // low power mode
 struct Alarm {
 	uint16_t hour;
 	uint16_t minute;
+	bool AM;
 };
 typedef struct Alarm Alarm;
 
@@ -32,6 +33,7 @@ uint16_t minute = 0;
 uint16_t hour = 1;
 Alarm alarmList[size];
 uint32_t alarmEntries = 0;
+bool alarmOn = false;
 
 // This debug function initializes Timer0A to request interrupts
 // at a 100 Hz frequency.  It is similar to FreqMeasure.c.
@@ -86,6 +88,9 @@ void Timer0A_Handler(void){
 		DisplayMinute();
 	if(newHour && GetCurrentState() != SetTime)
 		DisplayHour();
+	if(newMinute | newHour) 
+		CheckAlarms();
+	
 }
 
 uint32_t GetHour(){
@@ -114,11 +119,29 @@ void SetSecond(uint32_t s) {
 	EndCritical(sr);
 }
 
-/* alarm search, put this somewhere else
+void AddAlarm(uint16_t hour, uint16_t minute, bool AM) {
+	if(alarmEntries >= size) { return; } // can't add another alarm
+	alarmList[alarmEntries].hour = hour;
+	alarmList[alarmEntries].minute = minute;
+	alarmList[alarmEntries].AM = AM;
+	alarmEntries++;
+}
+
+void CheckAlarms() {
 	for(int i = 0; i < alarmEntries; i++) { // see if an alarm is set for this time
 		if(hour == alarmList[i].hour && minute == alarmList[i].minute) {
-			// alarm needs to go off
+			if(alarmList[i].AM == GetAM()) {
+				alarmOn = true;
+			}
 			break;
 		}
 	}
-*/
+}
+
+bool GetAlarmOn() {
+	return alarmOn;
+}
+
+void TurnAlarmOff() {
+	alarmOn = false;
+}

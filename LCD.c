@@ -11,7 +11,6 @@
 #include "../Lab1/fixed.h"
 #include "DigitalDisplay.h"
 
-
 // 180 points on a circle of radius 2.000
 const int32_t CircleXbuf[180] = { 2000, 1999, 1995, 1989, 1981, 1970, 1956, 1941, 1923, 1902, 1879, 1854, 1827, 1798, 1766, 1732, 1696, 1658, 1618, 1576, 1532, 1486, 1439, 1389, 1338, 1286, 1231, 1176, 1118, 1060, 1000, 939, 877, 813, 749, 684, 618, 551, 484, 416, 347, 278, 209, 140, 70, 0, -70, -140, -209, -278, -347, -416, -484, -551, -618, -684, -749, -813, -877, -939, -1000, -1060, -1118, -1176, -1231, -1286, -1338, -1389, -1439, -1486, -1532, -1576, -1618, -1658, -1696, -1732, -1766, -1798, -1827, -1854, -1879, -1902, -1923, -1941, -1956, -1970, -1981, -1989, -1995, -1999, -2000, -1999, -1995, -1989, -1981, -1970, -1956, -1941, -1923, -1902, -1879, -1854, -1827, -1798, -1766, -1732, -1696, -1658, -1618, -1576, -1532, -1486, -1439, -1389, -1338, -1286, -1231, -1176, -1118, -1060, -1000, -939, -877, -813, -749, -684, -618, -551, -484, -416, -347, -278, -209, -140, -70, 0, 70, 140, 209, 278, 347, 416, 484, 551, 618, 684, 749, 813, 877, 939, 1000, 1060, 1118, 1176, 1231, 1286, 1338, 1389, 1439, 1486, 1532, 1576, 1618, 1658, 1696, 1732, 1766, 1798, 1827, 1854, 1879, 1902, 1923, 1941, 1956, 1970, 1981, 1989, 1995, 1999
 };
@@ -56,6 +55,11 @@ void DisplayMainMenu(int16_t n) {
 
 
 void CheckSwitches() {
+	if(GetAlarmOn() && (select | down | up)) { // if alarm is on and any switch is pressed, turn off alarm
+		TurnAlarmOff();
+		ResetSwitches();
+		return;
+	}
 	if(select) {
 		ResetSwitches();
 		SelectFunction();
@@ -87,6 +91,7 @@ void SelectFunction() {
 					break;
 				case 3:		// set alarm
 					currentState = SetAlarm;
+					DigitalTimerDisplay(AlarmInit);
 					break;
 			}
 			break;
@@ -99,6 +104,7 @@ void SelectFunction() {
 			UpdateSet();
 			break;
 		case SetAlarm:
+			AlarmUpdateSet();
 			break;
 	}
 }
@@ -117,6 +123,7 @@ void DownFunction() {
 			DecreaseCurrent();
 			break;
 		case SetAlarm:
+			AlarmDecreaseCurrent();
 			break;
 	}
 }
@@ -135,6 +142,7 @@ void UpFunction() {
 			IncreaseCurrent();
 			break;
 		case SetAlarm:
+			AlarmIncreaseCurrent();
 			break;
 	}
 }

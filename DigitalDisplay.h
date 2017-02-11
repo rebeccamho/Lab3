@@ -4,6 +4,17 @@
 // 2/8/17
 
 #include <stdbool.h>
+#include "LCD.h"
+
+struct TimeSet {
+	int16_t x;
+	int16_t y;
+	char num;
+	int16_t fontColor;
+	int16_t backColor;
+	uint8_t size;
+};
+typedef struct TimeSet TimeSet;
 
 typedef enum  { tensH = 0,
 								onesH = 1,
@@ -27,19 +38,39 @@ void DigitalTimerDisplay(SwitchStates);
 //Changes what part of the time you're setting to the next variable
 //Input: none
 //Output: none
+//void UpdateSet(void);
 void UpdateSet(void);
 
+//----------AlarmUpdateSet-----------
+//Changes what part of the alarm you're setting to the next variable
+//Input: none
+//Output: none
+//void UpdateSet(void);
+void AlarmUpdateSet(void);								
+								
 //----------IncreaseCurrent-----------
 //Increases current variable that you're changing by 1. Displays variable
 //Input: none
 //Output: none
 void IncreaseCurrent(void);
 
+//----------AlarmIncreaseCurrent-----------
+//Increases current alarm variable that you're changing by 1. Displays variable
+//Input: none
+//Output: none
+void AlarmIncreaseCurrent(void);
+
 //----------DecreaseCurrent-----------
 //Decreases current variable that you're changing by 1. Displays variable
 //Input: none
 //Output: none
 void DecreaseCurrent(void);
+
+//----------AlarmDecreaseCurrent-----------
+//Decreases current alarm variable that you're changing by 1. Displays variable
+//Input: none
+//Output: none
+void AlarmDecreaseCurrent(void);
 
 //----------DrawTensPlaceH-----------
 //Draw tens place of hour
@@ -84,3 +115,15 @@ void Draw12hrTime(void);
 //Input: none
 //Output: none
 void DrawMilitaryTime(void);
+
+//----------ResetAlarmValues-----------
+//Resets all alarm settings to 0 to make setting next alarm easier
+//Input: none
+//Output: none
+void ResetAlarmValues(void);
+
+//----------GetAM-----------
+//Returns time of day (AM/PM)
+//Input: none
+//Output: true if AM, false if PM
+bool GetAM(void);

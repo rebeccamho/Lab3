@@ -26,6 +26,8 @@ void WaitForInterrupt(void);  // low power mode
 
 void DelayWait10ms(uint32_t);
 
+bool AlarmOn = false;
+
 int main(void){
 
 	PLL_Init(Bus80MHz);                   // 80 MHz
@@ -41,8 +43,11 @@ int main(void){
 	//DigitalDisplayInit();
 	EnableInterrupts();
 	while(1){
-		OutputSound(1); // toggles PF1 every 1 ms
+		if(GetAlarmOn()) { // if an alarm is on
+			OutputSound(1); // toggles PF1 every 1 ms
+		}
 		CheckSwitches();
 	}
 }
+
 
