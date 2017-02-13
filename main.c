@@ -15,6 +15,7 @@
 #include "LCD.h"
 #include "Speaker.h"
 #include "DigitalDisplay.h"
+#include "AnalogDisplay.h"
 
 #define PF1             (*((volatile uint32_t *)0x40025008))
 
@@ -37,16 +38,16 @@ int main(void){
 	PortF_Init();
 	PortE_Init();
 //	InitDigitalTimerDisplay();
-	//InitAnalogTimerDisplay();
+	InitAnalogTimerDisplay();
 	//InitDigitalTimerDisplay();
-	DisplayMainMenu(0);
+//	DisplayMainMenu(0);
 	//DigitalDisplayInit();
 	EnableInterrupts();
 	while(1){
-		if(GetAlarmOn()) { // if an alarm is on
-			OutputSound(GetAlarmPitch()); // toggles PF1 every 1 ms
-		}
-		CheckSwitches();
+//		if(GetAlarmOn()) { // if an alarm is on
+//			OutputSound(GetAlarmPitch()); // toggles PF1 every 1 ms
+//		}
+//		CheckSwitches();
 	}
 }
 

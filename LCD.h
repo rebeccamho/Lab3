@@ -77,12 +77,6 @@ void UpPressed(void);
 //Output: none
 void ResetSwitches(void);
 
-//----------InitDigitalTimerDisplay-----------
-//Initializes screen for digital timer. Time starts at 1:00
-//Input: none
-//Output: none
-void InitAnalogTimerDisplay(void);
-
 //----------GetCurrentState-----------
 //Returns current state of LCD
 //Input: none

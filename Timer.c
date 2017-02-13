@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include "LCD.h"
 #include "DigitalDisplay.h"
+#include "AnalogDisplay.h"
 
 #define PF1             (*((volatile uint32_t *)0x40025008))
 #define PF2             (*((volatile uint32_t *)0x40025010))
@@ -86,10 +87,32 @@ void Timer0A_Handler(void){
 	
 	EndCritical(sr);
 	
-	if(newMinute && GetCurrentState() != SetTime)
-		DisplayMinute();
-	if(newHour && GetCurrentState() != SetTime)
-		DisplayHour();
+	if(newMinute && GetCurrentState() != SetTime){
+		switch(GetCurrentState()){
+			case Digital:
+				DisplayMinute();
+				break;
+			case Analog:
+				AnalogDisplayMinute();
+				break;
+			default:
+				break;
+		}
+	}
+		
+	if(newHour && GetCurrentState() != SetTime){
+		switch(GetCurrentState()){
+			case Digital:
+				DisplayHour();
+				break;
+			case Analog:
+				AnalogDisplayHour();
+				break;
+			default:
+				break;
+		}
+	}
+		
 	if(newMinute | newHour) 
 		CheckAlarms();
 	
