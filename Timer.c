@@ -37,6 +37,8 @@ Alarm alarmList[size];
 uint32_t alarmEntries = 0;
 bool alarmOn = false;
 bool alarmPitch = false; // false for high, true for low
+bool updateM = false;
+bool updateH = false;
 
 // This debug function initializes Timer0A to request interrupts
 // at a 100 Hz frequency.  It is similar to FreqMeasure.c.
@@ -61,61 +63,32 @@ void Timer0A_Init1HzInt(void){
   NVIC_EN0_R = 1<<19;              // enable interrupt 19 in NVIC
 }
 
-bool newMinute = false;
-bool newHour = false;
+
 void Timer0A_Handler(void){
   TIMER0_ICR_R = TIMER_ICR_TATOCINT;    // acknowledge timer0A timeout
 	long sr = StartCritical();
-  PF2 ^= 0x04;                   // heartbeat
+  //PF2 ^= 0x04;                   // heartbeat
 	second++;
-	newMinute = false;
-	newHour = false;
+	updateM = false;
+	updateH = false;
 	//if(second == 60) { // reached end of minute
 	if(second == 1) { // reached end of minute
 		minute++;
-		newMinute = true;
+		updateM = true;
 		second = 0;
 		if(minute == 60) { // reached end of hour
 			minute = 0;
 			hour++;
-			newHour = true;
+			updateH = true;
 			if(hour == 13) { // reached end of 12-hr interval
 				hour = 1;
 			}
 		}
 	}
 	
-	EndCritical(sr);
-	
-	if(newMinute && GetCurrentState() != SetTime){
-		switch(GetCurrentState()){
-			case Digital:
-				DisplayMinute();
-				break;
-			case Analog:
-				AnalogDisplayMinute();
-				break;
-			default:
-				break;
-		}
-	}
-		
-	if(newHour && GetCurrentState() != SetTime){
-		switch(GetCurrentState()){
-			case Digital:
-				DisplayHour();
-				break;
-			case Analog:
-				AnalogDisplayHour();
-				break;
-			default:
-				break;
-		}
-	}
-		
-	if(newMinute | newHour) 
-		CheckAlarms();
-	
+	if(updateM) { UpdateMinute(); }
+	if(updateH) { UpdateHour(); }
+	EndCritical(sr);	
 }
 
 uint32_t GetHour(){

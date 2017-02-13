@@ -28,12 +28,12 @@ typedef enum  { MainMenu,
 //Output: none
 void DisplayMainMenu(int16_t);
 
-//----------CheckSwitches-----------
+//----------CheckFlags-----------
 //Checks if any switches have been pressed and calls appropriate functions
 //if one has been pressed
 //Input: none
 //Output: none
-void CheckSwitches(void);
+void CheckFlags(void);
 
 //----------SelectFunction-----------
 //Calls appropriate function depending on current LCD state
@@ -82,6 +82,18 @@ void ResetSwitches(void);
 //Input: none
 //Output: state of LCD
 LCDstate GetCurrentState(void);
+
+//----------UpdateMinute-----------
+//Sets flag to update minute
+//Input: none
+//Output: none
+void UpdateMinute(void);
+
+//----------UpdateHour-----------
+//Sets flag to update hour
+//Input: none
+//Output: none
+void UpdateHour(void);
 
 #endif
 

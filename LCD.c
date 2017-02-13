@@ -12,6 +12,12 @@
 #include "DigitalDisplay.h"
 #include "AnalogDisplay.h"
 
+void DisableInterrupts(void); // Disable interrupts
+void EnableInterrupts(void);  // Enable interrupts
+long StartCritical (void);    // previous I bit, disable interrupts
+void EndCritical(long sr);    // restore I bit to previous value
+void WaitForInterrupt(void);  // low power mode
+
 struct MenuOptions {
 	char* msg;
 	int16_t color;
@@ -27,6 +33,8 @@ MenuOptions mainMenuState[4] = {{"Analog Clock",ST7735_YELLOW,2},{"Digital Clock
 bool up = false;	// up switch state
 bool down = false;	// down switch state
 bool select = false;	// select switch state
+bool newMinute = false;
+bool newHour = false;
 LCDstate currentState;	
 int16_t currentMenuIndex = 0; // which index in array main menu is highlighting
 
@@ -49,7 +57,52 @@ void DisplayMainMenu(int16_t n) {
 }
 
 
-void CheckSwitches() {
+void CheckFlags() {
+	long sr = StartCritical();
+	if(newMinute && GetCurrentState() != SetTime){
+		switch(GetCurrentState()){
+			case Digital:
+				DisplayMinute();
+				break;
+			case Analog:
+				DigitalUpdateMinute();
+				AnalogDisplayMinute();
+				AnalogDisplayHour();
+				break;
+			case MainMenu:
+				DigitalUpdateMinute();
+				break;
+			default:
+				break;
+		}
+	}
+		
+	if(newHour && GetCurrentState() != SetTime){
+		switch(GetCurrentState()){
+			case Digital:
+				DisplayHour();
+				break;
+			case Analog:
+				DigitalUpdateHour();
+				AnalogDisplayHour();
+				break;
+			case MainMenu:
+				DigitalUpdateHour();
+				break;
+			default:
+				break;
+		}
+	}
+		
+	if(newMinute | newHour) {
+		CheckAlarms();
+	}
+	
+	newMinute = false;
+	newHour = false;
+	
+	EndCritical(sr);
+	
 	if(GetAlarmOn() && (select | down | up)) { // if alarm is on and any switch is pressed, turn off alarm
 		TurnAlarmOff();
 		ResetSwitches();
@@ -75,7 +128,7 @@ void SelectFunction() {
 			switch(currentMenuIndex) {
 				case 0:		// analog clock
 					currentState = Analog;
-					AnalogTimerDisplay();
+					AnalogTimerDisplay(None);
 					break;
 				case 1:		// digital clock
 					currentState = Digital;
@@ -95,6 +148,7 @@ void SelectFunction() {
 			DigitalTimerDisplay(Select);
 			break;
 		case Analog:
+			AnalogTimerDisplay(Select);
 			break;
 		case SetTime:		// in SetTime
 			UpdateSet();
@@ -163,4 +217,12 @@ void DownPressed() {
 
 LCDstate GetCurrentState() {
 	return currentState;
+}
+
+void UpdateMinute() {
+	newMinute = true;
+}
+
+void UpdateHour() {
+	newHour = true;
 }

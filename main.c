@@ -37,17 +37,14 @@ int main(void){
 	//Timer1A_Init100HzInt();
 	PortF_Init();
 	PortE_Init();
-//	InitDigitalTimerDisplay();
-	InitAnalogTimerDisplay();
-	//InitDigitalTimerDisplay();
-//	DisplayMainMenu(0);
-	//DigitalDisplayInit();
+	//InitAnalogTimerDisplay();
+	DisplayMainMenu(0);
 	EnableInterrupts();
 	while(1){
-//		if(GetAlarmOn()) { // if an alarm is on
-//			OutputSound(GetAlarmPitch()); // toggles PF1 every 1 ms
-//		}
-//		CheckSwitches();
+		if(GetAlarmOn()) { // if an alarm is on
+			OutputSound(GetAlarmPitch()); // toggles PF1 every 1 ms
+		}
+		CheckFlags();
 	}
 }
 

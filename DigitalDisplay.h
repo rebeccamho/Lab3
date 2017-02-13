@@ -128,3 +128,17 @@ void ResetAlarmValues(void);
 //Input: none
 //Output: true if AM, false if PM
 bool GetAM(void);
+
+//----------DigitalUpdateHour-----------
+//Updates hour stored in DigitalDisplay if not setting time or alarm
+//Input: none
+//Output: none
+void DigitalUpdateHour(void);
+
+//----------DigitalUpdateMinute-----------
+//Updates minute stored in DigitalDisplay if not setting time or alarm
+//Input: none
+//Output: none
+void DigitalUpdateMinute(void);
+
+

@@ -34,6 +34,8 @@ void DigitalTimerDisplay(SwitchStates state){
 	switch(state) {
 		case None:
 			Draw12hrTime();
+			//DisplayHour();
+			//DisplayMinute();
 			ST7735_DrawString(1, 14, "Military ON", ST7735_YELLOW);
 			ST7735_DrawString(1, 15, "Back", ST7735_RED);		
 			currentSelect = Military;
@@ -102,6 +104,7 @@ void DigitalTimerDisplay(SwitchStates state){
 void DisplayHour(){
 	//display hour on lcd
 	uint32_t h = GetHour();
+	
 	if(h == 10){
 		timeSetting[tensH].num = '1';
 		if(GetCurrentState() == Digital && !military){
@@ -171,6 +174,11 @@ void UpdateSet() {
 	timeSetting[currentlySetting].fontColor = ST7735_WHITE;
 	DrawDigit(currentlySetting);
 	currentlySetting++;
+	if(currentlySetting == 1) {	// dont setting hour tens
+		if(timeSetting[0].num == '1') {
+			timeSetting[1].num = '0';
+		}	
+	} 
 	if(currentlySetting == 4) {
 		if(AM) { DrawAM(ST7735_YELLOW); }
 		else { DrawPM(ST7735_YELLOW); }
@@ -192,6 +200,11 @@ void AlarmUpdateSet() {
 	alarmSetting[currentlySetting].fontColor = ST7735_WHITE;
 	DrawDigit(currentlySetting);
 	currentlySetting++;
+	if(currentlySetting == 1) {	// dont setting hour tens
+		if(alarmSetting[0].num == '1') {
+			alarmSetting[1].num = '0';
+		}	
+	} 
 	if(currentlySetting == 4) { // set AM/PM
 		if(alarmAM) { DrawAM(ST7735_YELLOW); }
 		else { DrawPM(ST7735_YELLOW); }
@@ -232,7 +245,7 @@ void IncreaseCurrent() {
 					currentVal = currentVal + 1 + '0';
 				}
 			} else if(currentVal == 9) { 
-				currentVal = 0 + '0';
+				currentVal = 1 + '0';
 			} else {
 				currentVal = currentVal + 1 + '0';
 			}
@@ -294,7 +307,7 @@ void AlarmIncreaseCurrent() {
 					currentVal = currentVal + 1 + '0';
 				}
 			} else if(currentVal == 9) { 
-				currentVal = 0 + '0';
+				currentVal = 1 + '0';
 			} else {
 				currentVal = currentVal + 1 + '0';
 			}
@@ -362,7 +375,7 @@ void DecreaseCurrent() {
 				} else {
 					currentVal = currentVal - 1 + '0';
 				}
-			} else if(currentVal == 0) { 
+			} else if(currentVal == 1) { 
 				currentVal = 9 + '0';
 			} else {
 				currentVal = currentVal - 1 + '0';
@@ -423,7 +436,7 @@ void AlarmDecreaseCurrent() {
 				} else {
 					currentVal = currentVal - 1 + '0';
 				}
-			} else if(currentVal == 0) { 
+			} else if(currentVal == 1) { 
 				currentVal = 9 + '0';
 			} else {
 				currentVal = currentVal - 1 + '0';
@@ -545,4 +558,17 @@ void ResetAlarmValues() {
 
 bool GetAM() {
 	return AM;
+}
+
+void DigitalUpdateHour() {
+	uint32_t h = GetHour();
+	timeSetting[0].num = h/10 + '0'; // tens hour
+	timeSetting[1].num = h%10 + '0'; // ones hour
+	
+}
+
+void DigitalUpdateMinute() {
+	uint32_t m = GetMinute();
+	timeSetting[2].num = m/10 + '0'; // tens minute
+	timeSetting[3].num = m%10 + '0'; // ones minute
 }
