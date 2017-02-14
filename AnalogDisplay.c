@@ -237,7 +237,7 @@ void AnalogDisplayMinute(void){
 	else if(m <= 30){
 		switch(m){
 			case 26:
-				ST7735_Line(63, 94, 83, 124, ST7735_BLACK);
+				ST7735_Line(63, 94, 83, 125, ST7735_BLACK);
 				ST7735_DrawChar(81, 123, '5', ST7735_WHITE, ST7735_BLACK, 1);
 				ST7735_Line(63, 94, 79, 125, ST7735_YELLOW);
 				break;
