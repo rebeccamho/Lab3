@@ -171,10 +171,10 @@ void AnalogDisplayMinute(void){
 				break;
 			case 14:
 				ST7735_Line(63, 94, 101, 86, ST7735_BLACK);
-				ST7735_Line(63, 94, 105, 94, ST7735_YELLOW);
+				ST7735_Line(63, 94, 103, 90, ST7735_YELLOW);
 				break;
 			case 15:
-				ST7735_Line(63, 94, 105, 94, ST7735_BLACK);		
+				ST7735_Line(63, 94, 103, 90, ST7735_BLACK);		
 				ST7735_DrawChar(100, 89, '3', ST7735_WHITE, ST7735_BLACK, 2); // redraw 3
 				ST7735_Line(63, 94, 105, 94, ST7735_YELLOW);
 				break;
@@ -185,19 +185,19 @@ void AnalogDisplayMinute(void){
 			case 16:
 				ST7735_Line(63, 94, 105, 94, ST7735_BLACK);
 				ST7735_DrawChar(100, 89, '3', ST7735_WHITE, ST7735_BLACK, 2);
-				ST7735_Line(63, 94, 105, 94, ST7735_YELLOW);
+				ST7735_Line(63, 94, 104, 97, ST7735_YELLOW);
 				break;
 			case 17:
-				ST7735_Line(63, 94, 105, 94, ST7735_BLACK);
+				ST7735_Line(63, 94, 104, 97, ST7735_BLACK);
 				ST7735_DrawChar(100, 89, '3', ST7735_WHITE, ST7735_BLACK, 2);
-				ST7735_Line(63, 94, 102, 102, ST7735_YELLOW);
+				ST7735_Line(63, 94, 103, 100, ST7735_YELLOW);
 				break;
 			case 18:
-				ST7735_Line(63, 94, 102, 102, ST7735_BLACK);
-				ST7735_Line(63, 94, 101, 105, ST7735_YELLOW);
+				ST7735_Line(63, 94, 103, 100, ST7735_BLACK);
+				ST7735_Line(63, 94, 101, 104, ST7735_YELLOW);
 				break;
 			case 19:
-				ST7735_Line(63, 94, 101, 105, ST7735_BLACK);
+				ST7735_Line(63, 94, 101, 104, ST7735_BLACK);
 				ST7735_Line(63, 94, 99, 108, ST7735_YELLOW);
 				break;
 			case 20:
@@ -237,7 +237,7 @@ void AnalogDisplayMinute(void){
 	else if(m <= 30){
 		switch(m){
 			case 26:
-				ST7735_Line(63, 94, 83, 125, ST7735_BLACK);
+				ST7735_Line(63, 94, 83, 124, ST7735_BLACK);
 				ST7735_DrawChar(81, 123, '5', ST7735_WHITE, ST7735_BLACK, 1);
 				ST7735_Line(63, 94, 79, 125, ST7735_YELLOW);
 				break;
@@ -333,10 +333,10 @@ void AnalogDisplayMinute(void){
 				break;
 			case 44:
 				ST7735_Line(63, 94, 23, 102, ST7735_BLACK);
-				ST7735_Line(63, 94, 18, 94, ST7735_YELLOW);
+				ST7735_Line(63, 94, 20, 98, ST7735_YELLOW);
 				break;
 			case 45:
-				ST7735_Line(63, 94, 18, 94, ST7735_BLACK);
+				ST7735_Line(63, 94, 20, 98, ST7735_BLACK);
 				ST7735_DrawChar(18, 89, '9', ST7735_WHITE, ST7735_BLACK, 2);
 				ST7735_Line(63, 94, 18, 94, ST7735_YELLOW);
 				break;
@@ -347,10 +347,10 @@ void AnalogDisplayMinute(void){
 			case 46:
 				ST7735_Line(63, 94, 18, 94, ST7735_BLACK);
 				ST7735_DrawChar(18, 89, '9', ST7735_WHITE, ST7735_BLACK, 2);
-				ST7735_Line(63, 94, 18, 94, ST7735_YELLOW);
+				ST7735_Line(63, 94, 19, 90, ST7735_YELLOW);
 				break;
 			case 47:
-				ST7735_Line(63, 94, 18, 94, ST7735_BLACK);
+				ST7735_Line(63, 94, 19, 90, ST7735_BLACK);
 				ST7735_DrawChar(18, 89, '9', ST7735_WHITE, ST7735_BLACK, 2);
 				ST7735_Line(63, 94, 20, 86, ST7735_YELLOW);
 				break;
