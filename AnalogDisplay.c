@@ -72,7 +72,7 @@ void DrawAnalogTimerDisplay(void){
 void AnalogTimerDisplay(SwitchStates state){
 	switch(state){
 		case Select:
-			DisplayMainMenu(1);
+			DisplayMainMenu(0);
 			break;
 		default:
 			DrawAnalogTimerDisplay();
