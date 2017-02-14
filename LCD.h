@@ -95,5 +95,11 @@ void UpdateMinute(void);
 //Output: none
 void UpdateHour(void);
 
+//----------IncreaseIdleCount-----------
+//Increase count of seconds user has been idle
+//Input: none
+//Output: none
+void IncreaseIdleCount(void);
+
 #endif
 

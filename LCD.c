@@ -37,6 +37,7 @@ bool newMinute = false;
 bool newHour = false;
 LCDstate currentState;	
 int16_t currentMenuIndex = 0; // which index in array main menu is highlighting
+int16_t idle = 0;
 
 				
 void DisplayMainMenu(int16_t n) {
@@ -58,6 +59,7 @@ void DisplayMainMenu(int16_t n) {
 
 
 void CheckFlags() {
+	// check if current time needs to be updated
 	long sr = StartCritical();
 	if(newMinute && GetCurrentState() != SetTime){
 		switch(GetCurrentState()){
@@ -75,8 +77,7 @@ void CheckFlags() {
 			default:
 				break;
 		}
-	}
-		
+	}		
 	if(newHour && GetCurrentState() != SetTime){
 		switch(GetCurrentState()){
 			case Digital:
@@ -92,34 +93,50 @@ void CheckFlags() {
 			default:
 				break;
 		}
-	}
-		
+	}		
 	if(newMinute | newHour) {
 		CheckAlarms();
-	}
-	
+	}	
 	newMinute = false;
 	newHour = false;
 	
 	EndCritical(sr);
-	
+
+// check if a switch has been pressed	
 	if(GetAlarmOn() && (select | down | up)) { // if alarm is on and any switch is pressed, turn off alarm
 		TurnAlarmOff();
 		ResetSwitches();
 		return;
 	}
 	if(select) {
+		sr = StartCritical();
+		idle = 0;
+		EndCritical(sr);
 		ResetSwitches();
 		SelectFunction();
 		
 	} else if(down) {
+		sr = StartCritical();
+		idle = 0;
+		EndCritical(sr);
 		ResetSwitches();
 		DownFunction();
 		
 	} else if(up) {
+		sr = StartCritical();
+		idle = 0;
+		EndCritical(sr);
 		ResetSwitches();
 		UpFunction();
 	}
+
+// check if user has been idle for too long
+	sr = StartCritical();
+	if(idle > 15 && currentState != MainMenu) {
+		idle = 0;
+		DisplayMainMenu(0);
+	}
+	EndCritical(sr);
 }
 
 void SelectFunction() {
@@ -225,4 +242,8 @@ void UpdateMinute() {
 
 void UpdateHour() {
 	newHour = true;
+}
+
+void IncreaseIdleCount() {
+	idle++;
 }

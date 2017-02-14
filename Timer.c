@@ -67,8 +67,9 @@ void Timer0A_Init1HzInt(void){
 void Timer0A_Handler(void){
   TIMER0_ICR_R = TIMER_ICR_TATOCINT;    // acknowledge timer0A timeout
 	long sr = StartCritical();
-  //PF2 ^= 0x04;                   // heartbeat
+  PF2 ^= 0x04;                   // heartbeat
 	second++;
+	IncreaseIdleCount();
 	updateM = false;
 	updateH = false;
 	//if(second == 60) { // reached end of minute
