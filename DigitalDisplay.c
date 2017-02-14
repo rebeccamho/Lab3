@@ -34,8 +34,6 @@ void DigitalTimerDisplay(SwitchStates state){
 	switch(state) {
 		case None:
 			Draw12hrTime();
-			//DisplayHour();
-			//DisplayMinute();
 			ST7735_DrawString(1, 14, "Military ON", ST7735_YELLOW);
 			ST7735_DrawString(1, 15, "Back", ST7735_RED);		
 			currentSelect = Military;
@@ -112,16 +110,17 @@ void DisplayHour(){
 		}
 	}
 	else if(h == 1){
+		timeSetting[tensH].num = '0';
+		if(GetCurrentState() == Digital && !military) {
+			DrawDigit(tensH);
+		}
+	} else if(h == 12) {
 		if(AM) {
 			AM = false;
 			if(!military) { DrawPM(ST7735_WHITE); }
 		} else {
 			AM = true;
 			if(!military) { DrawAM(ST7735_WHITE); }
-		}
-		timeSetting[tensH].num = '0';
-		if(GetCurrentState() == Digital && !military) {
-			DrawDigit(tensH);
 		}
 	}
 	h = h%10;
@@ -531,21 +530,26 @@ void DrawMilitaryTime() {
 	uint32_t hour = (timeSetting[tensH].num - '0')*10 + (timeSetting[onesH].num - '0');
 	
 	if(!AM) { // time of day is PM
-		hour = hour + 11;
-	} else {
-		hour = hour - 1;
-	}
-		uint32_t hourTens = hour/10;
-		uint32_t hourOnes = hour%10;
-
-		ST7735_DrawChar(timeSetting[tensH].x, timeSetting[tensH].y, hourTens + '0', 
-				timeSetting[tensH].fontColor, timeSetting[tensH].backColor, timeSetting[tensH].size);
-		ST7735_DrawChar(timeSetting[onesH].x, timeSetting[onesH].y, hourOnes + '0', 
-				timeSetting[onesH].fontColor, timeSetting[onesH].backColor, timeSetting[onesH].size);		
-		for(int i = 2; i < 4; i++) { // draw minutes
-			TimeSet current = timeSetting[i];
-			ST7735_DrawChar(current.x, current.y, current.num, current.fontColor, current.backColor, current.size);
+		if(hour != 12) {
+			hour = hour + 12;
 		}
+	} else {
+		hour = hour;
+	}
+	if(AM && hour == 12) { // special case for 12 AM
+		hour = 0;
+	}
+	uint32_t hourTens = hour/10;
+	uint32_t hourOnes = hour%10;
+
+	ST7735_DrawChar(timeSetting[tensH].x, timeSetting[tensH].y, hourTens + '0', 
+			timeSetting[tensH].fontColor, timeSetting[tensH].backColor, timeSetting[tensH].size);
+	ST7735_DrawChar(timeSetting[onesH].x, timeSetting[onesH].y, hourOnes + '0', 
+			timeSetting[onesH].fontColor, timeSetting[onesH].backColor, timeSetting[onesH].size);		
+	for(int i = 2; i < 4; i++) { // draw minutes
+		TimeSet current = timeSetting[i];
+		ST7735_DrawChar(current.x, current.y, current.num, current.fontColor, current.backColor, current.size);
+	}
 }
 
 void ResetAlarmValues() {
